@@ -78,7 +78,7 @@
       text-align: center;
     }
 
-    #wheel-container, #challenges, #items-container {
+    #wheel-container, #items-container {
       display: none;
       margin-top: 20px;
     }
@@ -105,21 +105,6 @@
     @keyframes spin {
       from { transform: rotate(0deg); }
       to { transform: rotate(3600deg); }
-    }
-
-    .challenge-item {
-      margin: 5px;
-      padding: 10px;
-      color: white;
-      background-color: transparent;
-      border: none;
-      cursor: pointer;
-      font-size: 18px;
-      text-align: left;
-    }
-
-    .challenge-item:hover {
-      color: yellow;
     }
 
     #boost-message {
@@ -209,7 +194,6 @@
   <div id="menu-modal">
     <div id="menu-content">
       <button class="button" onclick="toggleWheel()">Pyöräytä onnenpyörää</button>
-      <button class="button" onclick="toggleChallenges()">Haasteet</button>
       <button class="button" onclick="toggleItems()">Kerätyt Esineet</button>
       <button class="button" onclick="closeMenu()">Sulje Valikko</button>
     </div>
@@ -219,16 +203,6 @@
     <div id="wheel"></div>
     <button class="button" onclick="spinWheel()">Pyöräytä</button>
     <p id="reward"></p>
-  </div>
-
-  <div id="challenges">
-    <div class="challenge-item" onclick="collectItem('Roskia')">Roskia</div>
-    <div class="challenge-item" onclick="collectItem('Oksia')">Oksia</div>
-    <div class="challenge-item" onclick="collectItem('Ruokaa')">Ruokaa</div>
-    <div class="challenge-item" onclick="collectItem('Kimalteita')">Kimalteita</div>
-    <div class="challenge-item" onclick="collectItem('Varastettu lohi')">Varastettu lohi</div>
-    <div class="challenge-item" onclick="collectItem('Vanhat kengät')">Vanhat kengät</div>
-    <div class="challenge-item" onclick="collectItem('Nöyhtää')">Nöyhtää</div>
   </div>
 
   <div id="items-container">
@@ -267,11 +241,6 @@
     function toggleWheel() {
       const wheel = document.getElementById("wheel-container");
       wheel.style.display = wheel.style.display === "block" ? "none" : "block";
-    }
-
-    function toggleChallenges() {
-      const challenges = document.getElementById("challenges");
-      challenges.style.display = challenges.style.display === "block" ? "none" : "block";
     }
 
     function toggleItems() {
