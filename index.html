@@ -70,12 +70,27 @@
       display: none;
       z-index: 5;
     }
+    #itemsSection {
+      margin-top: 20px;
+    }
+    .item {
+      margin: 10px;
+      display: inline-block;
+      cursor: pointer;
+      padding: 10px;
+      border: 2px solid violet;
+      border-radius: 8px;
+    }
+    .item:hover {
+      background-color: #444;
+    }
   </style>
 </head>
 <body>
 
   <h1>Raccoin Clicker</h1>
-  <img id="raccoon" src="https://i.imgur.com/dzWJg6a.png" alt="Raccoon"/>
+  <!-- Lisätty oma kuva -->
+  <img id="raccoon" src="https://i.ibb.co/rKygFpDb/Hnet-com-image-1.jpg" alt="Raccoon" />
   <div id="score">Pisteet: 0</div>
   <button id="menuButton">Valikko</button>
 
@@ -87,11 +102,21 @@
     <button class="button" onclick="closeMenu()">Sulje</button>
   </div>
 
+  <div id="itemsSection">
+    <h2>Osta esineitä:</h2>
+    <div class="item" onclick="buyItem('doubleClick')">Tupla Klikkaus (100p)</div>
+    <div class="item" onclick="buyItem('boost')">Lisävoimaklikkaus (150p)</div>
+  </div>
+
   <script>
     let score = 0;
+    let doubleClickActive = false;
+    let boostActive = false;
 
+    // Raccoon click: lisää pisteitä
     document.getElementById("raccoon").onclick = () => {
-      score++;
+      let points = doubleClickActive ? 2 : 1;
+      score += points;
       updateScore();
     };
 
@@ -99,6 +124,7 @@
       document.getElementById("score").textContent = "Pisteet: " + score;
     }
 
+    // Valikko
     document.getElementById("menuButton").onclick = () => {
       document.getElementById("menuPopup").style.display = "block";
       document.getElementById("overlay").style.display = "block";
@@ -110,6 +136,7 @@
       document.getElementById("fortuneResult").textContent = "";
     }
 
+    // Onnenpyörä
     function spinWheel() {
       const outcomes = [
         { text: "Voitit 5 pistettä!", value: 5 },
@@ -122,13 +149,29 @@
       const result = outcomes[Math.floor(Math.random() * outcomes.length)];
 
       if (result.value === "double") {
-        score *= 2;
+        doubleClickActive = true;
+        document.getElementById("fortuneResult").textContent = "Tupla Klikkaus aktivoitu!";
       } else {
         score += result.value;
+        updateScore();
+        document.getElementById("fortuneResult").textContent = result.text;
       }
+    }
 
+    // Esineiden ostaminen
+    function buyItem(item) {
+      if (item === 'doubleClick' && score >= 100) {
+        score -= 100;
+        doubleClickActive = true;
+        alert("Tupla Klikkaus ostettu!");
+      } else if (item === 'boost' && score >= 150) {
+        score -= 150;
+        boostActive = true;
+        alert("Lisävoimaklikkaus ostettu!");
+      } else {
+        alert("Ei tarpeeksi pisteitä!");
+      }
       updateScore();
-      document.getElementById("fortuneResult").textContent = result.text;
     }
   </script>
 </body>
