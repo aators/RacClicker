@@ -306,10 +306,8 @@
     function updateCollectedItems() {
       const itemsContainer = document.getElementById("collected-items");
       itemsContainer.innerHTML = '';
-      let itemCount = 1;
       for (const item in collectedItems) {
         itemsContainer.innerHTML += `<div>${item}: ${collectedItems[item]}</div>`;
-        itemCount++;
       }
     }
 
