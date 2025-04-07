@@ -45,6 +45,11 @@
       border: 2px solid violet;
       border-radius: 8px;
       cursor: pointer;
+      display: block;
+      width: 80%;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .button:hover {
@@ -282,34 +287,22 @@
 
     function spinWheel() {
       const wheel = document.getElementById("wheel");
-      wheel.style.animation = "spin 4s ease-out";
-
+      wheel.style.animation = "spin 3s ease-out";
       setTimeout(() => {
+        const rewards = ["100 pistettä", "150 pistettä", "200 pistettä", "500 pistettä", "1000 pistettä", "Ei mitään"];
+        const reward = rewards[Math.floor(Math.random() * rewards.length)];
+        document.getElementById("reward").textContent = `Palkinto: ${reward}`;
+        score += reward === "Ei mitään" ? 0 : parseInt(reward);
+        document.getElementById("score").textContent = score;
         wheel.style.animation = "none";
-        const rewards = ["+10 pistettä", "x2 klikkeri", "Turbo!", "Tyhjä arpa", "x5 boost!", "50 pistettä!", "Mysteeriesine"];
-        const chosen = rewards[Math.floor(Math.random() * rewards.length)];
-        document.getElementById("reward").textContent = "Voitit: " + chosen;
-
-        // Bonus
-        if (chosen === "x2 klikkeri") multiplier *= 2;
-        if (chosen === "Turbo!") turbo = true;
-        if (chosen === "50 pistettä!") score += 50;
-
-        setTimeout(() => turbo = false, 5000);
-      }, 4000);
-
-      // Ääni
-      const spinSound = new Audio("https://www.soundjay.com/misc/sounds/spin-1.mp3");
-      spinSound.play();
+      }, 3000);
     }
 
     function collectItem(item) {
       if (!collectedItems[item]) {
-        collectedItems[item] = 1;
-      } else {
-        collectedItems[item]++;
+        collectedItems[item] = 0;
       }
-
+      collectedItems[item]++;
       updateItemTable();
     }
 
