@@ -2,6 +2,7 @@
 <html lang="fi">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Raccoon Clicker</title>
   <style>
     body {
@@ -15,13 +16,13 @@
 
     h1 {
       color: red;
-      font-size: 2.5em;
+      font-size: 2em;
       text-shadow: 0 0 10px red;
       font-family: 'Creepster', cursive;
     }
 
     #raccoon {
-      width: 150px;
+      width: 120px;
       height: auto;
       cursor: pointer;
       transition: transform 0.1s ease;
@@ -48,8 +49,26 @@
       background-color: #444;
     }
 
-    .menu {
-      margin-top: 20px;
+    #menu-modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      padding-top: 50px;
+    }
+
+    #menu-content {
+      background-color: #333;
+      margin: auto;
+      padding: 20px;
+      width: 80%;
+      max-width: 400px;
+      border-radius: 8px;
+      text-align: center;
     }
 
     #wheel-container, #challenges, #table-container {
@@ -58,8 +77,8 @@
     }
 
     #wheel {
-      width: 200px;
-      height: 200px;
+      width: 150px;
+      height: 150px;
       border-radius: 50%;
       border: 10px solid #444;
       margin: 0 auto;
@@ -117,6 +136,27 @@
     #collected-items-table td {
       background-color: #222;
     }
+
+    @media (max-width: 600px) {
+      #raccoon {
+        width: 100px;
+      }
+
+      .button {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+
+      #wheel {
+        width: 120px;
+        height: 120px;
+      }
+
+      #menu-content {
+        width: 90%;
+        max-width: 350px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -127,11 +167,19 @@
   <p id="boost-message"></p>
 
   <div class="menu">
-    <button class="button" onclick="toggleWheel()">Pyöräytä onnenpyörää</button>
-    <button class="button" onclick="toggleChallenges()">Haasteet</button>
-    <button class="button" onclick="toggleItemsTable()">Kerätyt Esineet</button>
+    <button class="button" onclick="openMenu()">Valikko</button>
     <button class="button" onclick="buyDoubleClick()">Osta tuplaklikkaus (100 pistettä)</button>
     <button class="button" onclick="buyTurboClick()">Osta tehoklikkaus (200 pistettä)</button>
+  </div>
+
+  <!-- Menu Modal -->
+  <div id="menu-modal">
+    <div id="menu-content">
+      <button class="button" onclick="toggleWheel()">Pyöräytä onnenpyörää</button>
+      <button class="button" onclick="toggleChallenges()">Haasteet</button>
+      <button class="button" onclick="toggleItemsTable()">Kerätyt Esineet</button>
+      <button class="button" onclick="closeMenu()">Sulje Valikko</button>
+    </div>
   </div>
 
   <div id="wheel-container">
@@ -181,6 +229,14 @@
       // Ääni
       const clickSound = new Audio("https://www.soundjay.com/buttons/button-16.mp3");
       clickSound.play();
+    }
+
+    function openMenu() {
+      document.getElementById("menu-modal").style.display = "block";
+    }
+
+    function closeMenu() {
+      document.getElementById("menu-modal").style.display = "none";
     }
 
     function toggleWheel() {
