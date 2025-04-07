@@ -17,14 +17,14 @@
 
     h1 {
       color: red;
-      font-size: 2em;
+      font-size: 2.5em;
       text-shadow: 0 0 10px red;
       font-family: 'Creepster', cursive;
       margin: 20px;
     }
 
     #raccoon {
-      width: 150px;
+      width: 180px;
       height: auto;
       cursor: pointer;
       transition: transform 0.1s ease;
@@ -36,7 +36,7 @@
     }
 
     .button {
-      margin: 10px;
+      margin: 15px;
       padding: 12px 24px;
       font-size: 16px;
       font-weight: bold;
@@ -84,8 +84,8 @@
     }
 
     #wheel {
-      width: 150px;
-      height: 150px;
+      width: 180px;
+      height: 180px;
       border-radius: 50%;
       border: 10px solid #444;
       margin: 0 auto;
@@ -145,8 +145,12 @@
     }
 
     @media (max-width: 600px) {
+      h1 {
+        font-size: 2em;
+      }
+
       #raccoon {
-        width: 120px;
+        width: 150px;
       }
 
       .button {
@@ -155,8 +159,8 @@
       }
 
       #wheel {
-        width: 130px;
-        height: 130px;
+        width: 150px;
+        height: 150px;
       }
 
       #menu-content {
@@ -170,7 +174,7 @@
       }
 
       #raccoon {
-        width: 100px;
+        width: 120px;
       }
 
       .button {
@@ -276,59 +280,20 @@
     }
 
     function toggleChallenges() {
-      const ch = document.getElementById("challenges");
-      ch.style.display = ch.style.display === "block" ? "none" : "block";
+      const challenges = document.getElementById("challenges");
+      challenges.style.display = challenges.style.display === "block" ? "none" : "block";
     }
 
     function toggleItemsTable() {
-      const table = document.getElementById("table-container");
-      table.style.display = table.style.display === "block" ? "none" : "block";
-    }
-
-    function spinWheel() {
-      const wheel = document.getElementById("wheel");
-      wheel.style.animation = "spin 3s ease-out";
-      setTimeout(() => {
-        const rewards = ["100 pistettä", "150 pistettä", "200 pistettä", "500 pistettä", "1000 pistettä", "Ei mitään"];
-        const reward = rewards[Math.floor(Math.random() * rewards.length)];
-        document.getElementById("reward").textContent = `Palkinto: ${reward}`;
-        score += reward === "Ei mitään" ? 0 : parseInt(reward);
-        document.getElementById("score").textContent = score;
-        wheel.style.animation = "none";
-      }, 3000);
-    }
-
-    function collectItem(item) {
-      if (!collectedItems[item]) {
-        collectedItems[item] = 0;
-      }
-      collectedItems[item]++;
-      updateItemTable();
-    }
-
-    function updateItemTable() {
-      const tableBody = document.getElementById("collected-items-body");
-      tableBody.innerHTML = "";
-      for (const item in collectedItems) {
-        const row = document.createElement("tr");
-        const itemCell = document.createElement("td");
-        const countCell = document.createElement("td");
-
-        itemCell.textContent = item;
-        countCell.textContent = collectedItems[item];
-
-        row.appendChild(itemCell);
-        row.appendChild(countCell);
-        tableBody.appendChild(row);
-      }
+      const tableContainer = document.getElementById("table-container");
+      tableContainer.style.display = tableContainer.style.display === "block" ? "none" : "block";
     }
 
     function buyDoubleClick() {
       if (score >= 100) {
         score -= 100;
-        multiplier *= 2;
+        multiplier = 2;
         document.getElementById("score").textContent = score;
-        alert("Ostit tuplaklikkerin!");
       }
     }
 
@@ -337,7 +302,33 @@
         score -= 200;
         turbo = true;
         document.getElementById("score").textContent = score;
-        alert("Ostit turbo tehostuksen!");
+      }
+    }
+
+    function spinWheel() {
+      document.getElementById("wheel").style.animation = "spin 3s ease-out";
+      setTimeout(() => document.getElementById("wheel").style.animation = "", 3000);
+      let reward = "Palkinto: " + (Math.floor(Math.random() * 5) + 1);
+      document.getElementById("reward").textContent = reward;
+    }
+
+    function collectItem(item) {
+      if (!collectedItems[item]) {
+        collectedItems[item] = 1;
+      } else {
+        collectedItems[item]++;
+      }
+
+      updateItemsTable();
+    }
+
+    function updateItemsTable() {
+      const tableBody = document.getElementById("collected-items-body");
+      tableBody.innerHTML = "";
+
+      for (let item in collectedItems) {
+        let row = `<tr><td>${item}</td><td>${collectedItems[item]}</td></tr>`;
+        tableBody.innerHTML += row;
       }
     }
   </script>
