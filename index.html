@@ -1,82 +1,135 @@
 <!DOCTYPE html>
-<html lang="fi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Raccoin Clicker</title>
-  <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
   <style>
-    /* Yleinen sivun ulkoasu */
     body {
-      background-color: #121212; /* Tumma tausta */
-      color: #d1d1d1; /* Vaalea teksti */
-      font-family: 'Righteous', sans-serif; /* Gootti-fontti */
+      background-color: #1a1a1a;
+      color: violet;
+      font-family: 'Courier New', monospace;
       text-align: center;
       margin: 0;
       padding: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
     }
-
-    /* Otsikon tyyli */
     h1 {
-      color: #ff6347; /* Kirkas punainen väri */
-      font-size: 50px;
-      margin-bottom: 20px;
-      text-shadow: 0px 0px 20px #ff6347; /* Hehkuva punainen varjo */
-    }
-
-    /* Pesukarhun kuva */
-    #raccoon {
-      width: 250px;
-      cursor: pointer; /* Käyttäjä voi klikata kuvaa */
-      border-radius: 15px;
-      transition: transform 0.1s ease-in-out; /* Animaatio */
-    }
-
-    /* Pesukarhun kuva kutistuu klikkauksesta */
-    #raccoon:active {
-      transform: scale(0.95);
-    }
-
-    /* Pisteiden näyttö */
-    #score {
-      font-size: 30px;
       margin-top: 20px;
-      color: #f0f0f0;
-      text-shadow: 0px 0px 15px #ff6347; /* Pisteet erottuvat kirkkaalla varjolla */
     }
-
-    /* Pelin säilö */
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    #raccoon {
+      width: 200px;
+      cursor: pointer;
+      margin: 20px auto;
+    }
+    #score {
+      font-size: 24px;
+      margin: 10px 0;
+    }
+    #menuButton {
+      background-color: violet;
+      color: black;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 10px;
+    }
+    #menuPopup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 300px;
+      transform: translate(-50%, -50%);
+      background-color: #333;
+      color: violet;
+      border: 2px solid violet;
+      border-radius: 20px;
+      padding: 20px;
+      z-index: 10;
+    }
+    #fortuneResult {
+      margin-top: 10px;
+    }
+    .button {
+      background-color: black;
+      color: violet;
+      padding: 10px;
+      margin: 5px;
+      border: 1px solid violet;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: none;
+      z-index: 5;
     }
   </style>
 </head>
 <body>
-  <!-- Pelin rakenne -->
-  <div class="container">
-    <h1>Raccoin Clicker</h1>
-    <img id="raccoon" src="raccoon.png" alt="Raccoon"> <!-- Pesukarhun kuva -->
-    <div id="score">Score: 0</div> <!-- Pisteet -->
+
+  <h1>Raccoin Clicker</h1>
+  <img id="raccoon" src="https://i.imgur.com/dzWJg6a.png" alt="Raccoon"/>
+  <div id="score">Pisteet: 0</div>
+  <button id="menuButton">Valikko</button>
+
+  <div id="overlay"></div>
+  <div id="menuPopup">
+    <h2>Valikko</h2>
+    <button class="button" onclick="spinWheel()">Pyöritä Onnenpyörää</button>
+    <div id="fortuneResult"></div>
+    <button class="button" onclick="closeMenu()">Sulje</button>
   </div>
 
   <script>
-    let score = 0; // Alkuperäinen pistemäärä
-    const scoreEl = document.getElementById("score"); // Piste-elementti
-    const raccoon = document.getElementById("raccoon"); // Pesukarhun kuva-elementti
+    let score = 0;
 
-    // Kuuntelija, joka reagoi pesukarhun klikkaukseen
-    raccoon.addEventListener("click", () => {
-      score++; // Kasvata pistemäärää yhdellä
-      scoreEl.textContent = "Score: " + score; // Päivitä pisteet näyttöön
-    });
+    document.getElementById("raccoon").onclick = () => {
+      score++;
+      updateScore();
+    };
+
+    function updateScore() {
+      document.getElementById("score").textContent = "Pisteet: " + score;
+    }
+
+    document.getElementById("menuButton").onclick = () => {
+      document.getElementById("menuPopup").style.display = "block";
+      document.getElementById("overlay").style.display = "block";
+    };
+
+    function closeMenu() {
+      document.getElementById("menuPopup").style.display = "none";
+      document.getElementById("overlay").style.display = "none";
+      document.getElementById("fortuneResult").textContent = "";
+    }
+
+    function spinWheel() {
+      const outcomes = [
+        { text: "Voitit 5 pistettä!", value: 5 },
+        { text: "Voitit 10 pistettä!", value: 10 },
+        { text: "Voitit 20 pistettä!", value: 20 },
+        { text: "Ei voittoa tällä kertaa!", value: 0 },
+        { text: "Kerros x2!", value: "double" },
+      ];
+
+      const result = outcomes[Math.floor(Math.random() * outcomes.length)];
+
+      if (result.value === "double") {
+        score *= 2;
+      } else {
+        score += result.value;
+      }
+
+      updateScore();
+      document.getElementById("fortuneResult").textContent = result.text;
+    }
   </script>
 </body>
 </html>
