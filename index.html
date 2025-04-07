@@ -23,12 +23,6 @@
       text-shadow: 0 0 20px red;
       text-align: center;
       margin-top: 20px;
-      animation: glow 2s infinite alternate;
-    }
-
-    @keyframes glow {
-      0% { text-shadow: 0 0 10px red; }
-      100% { text-shadow: 0 0 30px red; }
     }
 
     #raccoon {
@@ -65,7 +59,6 @@
       width: 90%;
       max-width: 300px;
       transition: 0.3s ease;
-      text-shadow: 0 0 10px black;
     }
 
     .button:hover {
@@ -118,7 +111,6 @@
       font-size: 1.5em;
       margin-top: 20px;
       color: yellow;
-      text-shadow: 0 0 10px black;
     }
 
     .particle {
@@ -139,7 +131,7 @@
 </head>
 <body>
   <h1>Raccoon Clicker</h1>
-  <img id="raccoon" src="https://i.ibb.co/Xx9zLV5N/Hnet-com-image-1.jpg" alt="Raccoon" onclick="clickRaccoon()">
+  <img id="raccoon" src="https://i.ibb.co/Xx9zLV5N/Hnet-com-image-1.jpg" alt="Raccoon">
   <div class="score">Pisteet: <span id="score">0</span></div>
   <p id="boost-message" style="text-align:center;"></p>
 
@@ -163,12 +155,15 @@
     let multiplier = 1;
     let turbo = false;
 
+    const raccoon = document.getElementById("raccoon");
+    raccoon.addEventListener("click", (event) => clickRaccoon(event));
+
     function clickRaccoon(event) {
       let points = multiplier;
       if (turbo) points *= 3;
       score += points;
       document.getElementById("score").textContent = score;
-      showParticles(event.pageX, event.pageY);
+      showParticles(event.clientX, event.clientY);
 
       const clickSound = new Audio("https://www.soundjay.com/buttons/button-16.mp3");
       clickSound.play();
@@ -239,4 +234,12 @@
       for (let i = 0; i < 10; i++) {
         const particle = document.createElement("div");
         particle.className = "particle";
-        particle.style.left =
+        particle.style.left = `${x + Math.random() * 30 - 15}px`;
+        particle.style.top = `${y + Math.random() * 30 - 15}px`;
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 1000);
+      }
+    }
+  </script>
+</body>
+</html>
