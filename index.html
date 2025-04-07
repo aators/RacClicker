@@ -6,15 +6,19 @@
   <title>Raccoin Clicker</title>
   <style>
     body {
-      background-color: #1a1a1a;
+      background-color: black;
       color: violet;
-      font-family: 'Courier New', monospace;
+      font-family: 'Arial', sans-serif;
       text-align: center;
       margin: 0;
       padding: 0;
     }
     h1 {
       margin-top: 20px;
+      font-family: 'Creepster', cursive; /* Gootti ja mystinen fontti */
+      color: #800080; /* Tumma violetti väri */
+      font-size: 50px;
+      font-weight: bold;
     }
     #raccoon {
       width: 200px;
@@ -84,12 +88,41 @@
     .item:hover {
       background-color: #444;
     }
+    
+    /* Onnenpyörän tyyli */
+    .wheel-container {
+      margin-top: 20px;
+      width: 250px;
+      height: 250px;
+      position: relative;
+      border-radius: 50%;
+      border: 4px solid violet;
+      display: inline-block;
+      background: radial-gradient(circle, #444, #222);
+    }
+    .wheel {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: conic-gradient(violet 0%, red 14%, green 14%, yellow 28%, blue 28%, orange 42%, purple 42%, pink 56%, violet 56%);
+      border-radius: 50%;
+      transition: transform 3s ease-out;
+    }
+    .wheel-spin {
+      transform: rotate(720deg);
+    }
+
+    /* Turbotehostus */
+    #turboboost {
+      font-size: 18px;
+      color: lightgreen;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
 
   <h1>Raccoin Clicker</h1>
-  <!-- Lisätty oma kuva -->
   <img id="raccoon" src="https://i.ibb.co/rKygFpDb/Hnet-com-image-1.jpg" alt="Raccoon" />
   <div id="score">Pisteet: 0</div>
   <button id="menuButton">Valikko</button>
@@ -106,16 +139,26 @@
     <h2>Osta esineitä:</h2>
     <div class="item" onclick="buyItem('doubleClick')">Tupla Klikkaus (100p)</div>
     <div class="item" onclick="buyItem('boost')">Lisävoimaklikkaus (150p)</div>
+    <div class="item" onclick="buyItem('turboboost')">Turbotehostusklikkaus (200p)</div>
   </div>
+
+  <!-- Onnenpyörä -->
+  <div class="wheel-container">
+    <div id="wheel" class="wheel"></div>
+  </div>
+
+  <div id="turboboost">Turbotehostus: Ei aktivoitu</div>
 
   <script>
     let score = 0;
     let doubleClickActive = false;
     let boostActive = false;
+    let turboBoostActive = false;
 
     // Raccoon click: lisää pisteitä
     document.getElementById("raccoon").onclick = () => {
       let points = doubleClickActive ? 2 : 1;
+      if (turboBoostActive) points *= 2;
       score += points;
       updateScore();
     };
@@ -138,24 +181,36 @@
 
     // Onnenpyörä
     function spinWheel() {
-      const outcomes = [
-        { text: "Voitit 5 pistettä!", value: 5 },
-        { text: "Voitit 10 pistettä!", value: 10 },
-        { text: "Voitit 20 pistettä!", value: 20 },
-        { text: "Ei voittoa tällä kertaa!", value: 0 },
-        { text: "Kerros x2!", value: "double" },
-      ];
+      const wheel = document.getElementById("wheel");
+      wheel.classList.add("wheel-spin");
 
-      const result = outcomes[Math.floor(Math.random() * outcomes.length)];
+      setTimeout(() => {
+        wheel.classList.remove("wheel-spin");
 
-      if (result.value === "double") {
-        doubleClickActive = true;
-        document.getElementById("fortuneResult").textContent = "Tupla Klikkaus aktivoitu!";
-      } else {
-        score += result.value;
-        updateScore();
-        document.getElementById("fortuneResult").textContent = result.text;
-      }
+        const outcomes = [
+          { text: "Voitit 5 pistettä!", value: 5 },
+          { text: "Voitit 10 pistettä!", value: 10 },
+          { text: "Voitit 20 pistettä!", value: 20 },
+          { text: "Ei voittoa tällä kertaa!", value: 0 },
+          { text: "Kerros x2!", value: "double" },
+          { text: "Turbotehostus klikkaus!", value: "turbo" },
+          { text: "Pisteet tuplaantuvat 10s ajaksi!", value: "double" },
+        ];
+
+        const result = outcomes[Math.floor(Math.random() * outcomes.length)];
+
+        if (result.value === "double") {
+          doubleClickActive = true;
+          document.getElementById("fortuneResult").textContent = "Tupla Klikkaus aktivoitu!";
+        } else if (result.value === "turbo") {
+          turboBoostActive = true;
+          document.getElementById("turboboost").textContent = "Turbotehostus aktivoitu!";
+        } else {
+          score += result.value;
+          updateScore();
+          document.getElementById("fortuneResult").textContent = result.text;
+        }
+      }, 3000);
     }
 
     // Esineiden ostaminen
@@ -168,6 +223,11 @@
         score -= 150;
         boostActive = true;
         alert("Lisävoimaklikkaus ostettu!");
+      } else if (item === 'turboboost' && score >= 200) {
+        score -= 200;
+        turboBoostActive = true;
+        document.getElementById("turboboost").textContent = "Turbotehostus aktivoitu!";
+        alert("Turbotehostus klikkaus ostettu!");
       } else {
         alert("Ei tarpeeksi pisteitä!");
       }
