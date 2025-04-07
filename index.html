@@ -309,7 +309,7 @@
       const itemsContainer = document.getElementById("collected-items");
       itemsContainer.innerHTML = '';
       for (const item in collectedItems) {
-        itemsContainer.innerHTML += `<div>${item}: ${collectedItems[item]}</div>`;
+        itemsContainer.innerHTML += `${item}: ${collectedItems[item]}<br>`;
       }
     }
 
