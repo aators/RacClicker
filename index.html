@@ -78,7 +78,7 @@
       text-align: center;
     }
 
-    #wheel-container, #challenges, #table-container {
+    #wheel-container, #challenges, #items-container {
       display: none;
       margin-top: 20px;
     }
@@ -112,8 +112,12 @@
       padding: 10px;
       border: 2px dashed violet;
       border-radius: 10px;
-      display: inline-block;
+      display: block;
       color: white;
+      background-color: #222;
+      width: 80%;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     #boost-message {
@@ -123,25 +127,17 @@
       margin-top: 10px;
     }
 
-    #collected-items-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    #collected-items-table th, td {
-      border: 1px solid violet;
-      padding: 8px;
-      text-align: center;
+    #collected-items {
       color: white;
+      font-size: 18px;
+      margin-top: 20px;
+      display: inline-block;
+      max-width: 90%;
+      text-align: left;
     }
 
-    #collected-items-table th {
-      background-color: #444;
-    }
-
-    #collected-items-table td {
-      background-color: #222;
+    #collected-items div {
+      margin-bottom: 5px;
     }
 
     @media (max-width: 600px) {
@@ -212,7 +208,7 @@
     <div id="menu-content">
       <button class="button" onclick="toggleWheel()">Pyöräytä onnenpyörää</button>
       <button class="button" onclick="toggleChallenges()">Haasteet</button>
-      <button class="button" onclick="toggleItemsTable()">Kerätyt Esineet</button>
+      <button class="button" onclick="toggleItems()">Kerätyt Esineet</button>
       <button class="button" onclick="closeMenu()">Sulje Valikko</button>
     </div>
   </div>
@@ -233,16 +229,8 @@
     <div class="challenge-item" onclick="collectItem('Nöyhtää')">Nöyhtää</div>
   </div>
 
-  <div id="table-container">
-    <table id="collected-items-table">
-      <thead>
-        <tr>
-          <th>Esine</th>
-          <th>Määrä</th>
-        </tr>
-      </thead>
-      <tbody id="collected-items-body"></tbody>
-    </table>
+  <div id="items-container">
+    <div id="collected-items"></div>
   </div>
 
   <script>
@@ -284,9 +272,9 @@
       challenges.style.display = challenges.style.display === "block" ? "none" : "block";
     }
 
-    function toggleItemsTable() {
-      const tableContainer = document.getElementById("table-container");
-      tableContainer.style.display = tableContainer.style.display === "block" ? "none" : "block";
+    function toggleItems() {
+      const items = document.getElementById("items-container");
+      items.style.display = items.style.display === "block" ? "none" : "block";
     }
 
     function buyDoubleClick() {
@@ -305,13 +293,6 @@
       }
     }
 
-    function spinWheel() {
-      document.getElementById("wheel").style.animation = "spin 3s ease-out";
-      setTimeout(() => document.getElementById("wheel").style.animation = "", 3000);
-      let reward = "Palkinto: " + (Math.floor(Math.random() * 5) + 1);
-      document.getElementById("reward").textContent = reward;
-    }
-
     function collectItem(item) {
       if (!collectedItems[item]) {
         collectedItems[item] = 1;
@@ -319,17 +300,30 @@
         collectedItems[item]++;
       }
 
-      updateItemsTable();
+      updateCollectedItems();
     }
 
-    function updateItemsTable() {
-      const tableBody = document.getElementById("collected-items-body");
-      tableBody.innerHTML = "";
-
-      for (let item in collectedItems) {
-        let row = `<tr><td>${item}</td><td>${collectedItems[item]}</td></tr>`;
-        tableBody.innerHTML += row;
+    function updateCollectedItems() {
+      const itemsContainer = document.getElementById("collected-items");
+      itemsContainer.innerHTML = '';
+      let itemCount = 1;
+      for (const item in collectedItems) {
+        itemsContainer.innerHTML += `<div>${item}: ${collectedItems[item]}</div>`;
+        itemCount++;
       }
+    }
+
+    function spinWheel() {
+      const wheel = document.getElementById("wheel");
+      wheel.style.animation = "spin 3s ease-out";
+      setTimeout(() => {
+        wheel.style.animation = "none";  // Stop spinning
+        const reward = ["Pisteitä +10", "Pisteitä +20", "Turbo aktivoitu", "Yksi kerätty esine"].random();
+        document.getElementById("reward").textContent = reward;
+        if (reward === "Turbo aktivoitu") {
+          turbo = true;
+        }
+      }, 3000);
     }
   </script>
 </body>
