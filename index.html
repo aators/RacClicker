@@ -82,6 +82,7 @@
       border-radius: 10px;
       display: inline-block;
       color: white;
+      cursor: pointer;
     }
 
     #boost-message {
@@ -89,6 +90,12 @@
       font-weight: bold;
       font-size: 18px;
       margin-top: 10px;
+    }
+
+    #reward {
+      font-size: 20px;
+      font-weight: bold;
+      color: yellow;
     }
   </style>
 </head>
@@ -111,13 +118,13 @@
   </div>
 
   <div id="challenges">
-    <div class="challenge-item">Roskia</div>
-    <div class="challenge-item">Oksia</div>
-    <div class="challenge-item">Ruokaa</div>
-    <div class="challenge-item">Kimalteita</div>
-    <div class="challenge-item">Varastettu lohi</div>
-    <div class="challenge-item">Vanhat kengät</div>
-    <div class="challenge-item">Nöyhtää</div>
+    <div class="challenge-item" onclick="collectItem('Roskia')">Roskia</div>
+    <div class="challenge-item" onclick="collectItem('Oksia')">Oksia</div>
+    <div class="challenge-item" onclick="collectItem('Ruokaa')">Ruokaa</div>
+    <div class="challenge-item" onclick="collectItem('Kimalteita')">Kimalteita</div>
+    <div class="challenge-item" onclick="collectItem('Varastettu lohi')">Varastettu lohi</div>
+    <div class="challenge-item" onclick="collectItem('Vanhat kengät')">Vanhat kengät</div>
+    <div class="challenge-item" onclick="collectItem('Nöyhtää')">Nöyhtää</div>
   </div>
 
   <script>
@@ -156,7 +163,15 @@
 
       setTimeout(() => {
         wheel.style.animation = "none";
-        const rewards = ["+10 pistettä", "x2 klikkeri", "Turbo!", "Tyhjä arpa", "x5 boost!", "50 pistettä!", "Mysteeriesine"];
+        const rewards = [
+          "+10 pistettä", 
+          "x2 klikkeri", 
+          "Turbo!", 
+          "Tyhjä arpa", 
+          "x5 boost!", 
+          "50 pistettä!", 
+          "Mysteeriesine"
+        ];
         const chosen = rewards[Math.floor(Math.random() * rewards.length)];
         document.getElementById("reward").textContent = "Voitit: " + chosen;
 
@@ -171,6 +186,11 @@
       // Ääni
       const spinSound = new Audio("https://www.soundjay.com/misc/sounds/spin-1.mp3");
       spinSound.play();
+    }
+
+    function collectItem(item) {
+      alert(`Keräsit: ${item}`);
+      // Esineet voi olla osa tulevaa pistelaskua tai muuta peliin liittyvää
     }
   </script>
 </body>
