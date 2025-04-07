@@ -1,163 +1,177 @@
 <!DOCTYPE html>
 <html lang="fi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raccoon Clicker</title>
-    <link rel="icon" type="image/png" href="https://i.ibb.co/Xx9zLV5N/Hnet-com-image-1.jpg">
+  <meta charset="UTF-8">
+  <title>Raccoon Clicker</title>
+  <style>
+    body {
+      background-color: black;
+      color: violet;
+      font-family: 'Georgia', serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
 
-    <style>
-        body {
-            background: url('https://i.ibb.co/7v8qQjk/forest-dark.jpg') no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Courier New', Courier, monospace;
-            color: white;
-            padding: 0;
-            margin: 0;
-        }
+    h1 {
+      color: #8b00ff;
+      font-size: 3em;
+      text-shadow: 0 0 10px #8b00ff;
+    }
 
-        h1 {
-            font-family: 'Creepster', cursive;
-            color: #6a0dad; /* Tumma violetti */
-            font-size: 60px;
-            text-align: center;
-            text-shadow: 2px 2px 4px #000000;
-        }
+    #raccoon {
+      width: 250px;
+      height: auto;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
 
-        #menu {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 30px;
-        }
+    #raccoon:active {
+      transform: scale(1.1);
+    }
 
-        button {
-            padding: 15px 30px;
-            font-size: 20px;
-            cursor: pointer;
-            border: none;
-            background-color: #6a0dad;
-            color: white;
-            border-radius: 10px;
-            transition: background-color 0.3s ease;
-        }
+    .button {
+      margin: 10px;
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      background-color: #222;
+      color: violet;
+      border: 2px solid violet;
+      border-radius: 8px;
+      cursor: pointer;
+    }
 
-        button:hover {
-            background-color: #9b4d96;
-        }
+    .menu {
+      margin-top: 20px;
+    }
 
-        #spin-wheel {
-            display: none;
-            margin-top: 30px;
-            border: 10px solid #000;
-            border-radius: 50%;
-            width: 300px;
-            height: 300px;
-            position: relative;
-            background: conic-gradient(from 90deg, red, green, yellow, blue, pink, orange, purple);
-        }
+    #wheel-container, #challenges {
+      display: none;
+      margin-top: 30px;
+    }
 
-        #spin-wheel div {
-            position: absolute;
-            width: 50%;
-            height: 50%;
-            background: #444;
-            top: 25%;
-            left: 25%;
-            text-align: center;
-            line-height: 120px;
-            color: white;
-            font-size: 18px;
-        }
+    #wheel {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      border: 10px solid #444;
+      margin: 0 auto;
+      position: relative;
+      background: conic-gradient(
+        red 0deg 51deg,
+        black 51deg 102deg,
+        yellow 102deg 153deg,
+        red 153deg 204deg,
+        black 204deg 255deg,
+        yellow 255deg 306deg,
+        red 306deg 360deg
+      );
+      animation: none;
+    }
 
-        #spin-wheel div:nth-child(1) { transform: rotate(0deg); }
-        #spin-wheel div:nth-child(2) { transform: rotate(51.42deg); }
-        #spin-wheel div:nth-child(3) { transform: rotate(102.84deg); }
-        #spin-wheel div:nth-child(4) { transform: rotate(154.26deg); }
-        #spin-wheel div:nth-child(5) { transform: rotate(205.68deg); }
-        #spin-wheel div:nth-child(6) { transform: rotate(257.1deg); }
-        #spin-wheel div:nth-child(7) { transform: rotate(308.52deg); }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(3600deg); }
+    }
 
-        .challenge-items {
-            display: none;
-            text-align: center;
-            margin-top: 20px;
-        }
+    .challenge-item {
+      margin: 10px;
+      padding: 10px;
+      border: 2px dashed violet;
+      border-radius: 10px;
+      display: inline-block;
+      color: white;
+    }
 
-        .challenge-items ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .challenge-items li {
-            font-size: 18px;
-            color: #FF6347;
-        }
-    </style>
+    #boost-message {
+      color: yellow;
+      font-weight: bold;
+      font-size: 18px;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-    <h1>Raccoon Clicker</h1>
+  <h1>Raccoon Clicker</h1>
+  <img id="raccoon" src="https://i.ibb.co/Xx9zLV5N/Hnet-com-image-1.jpg" alt="Raccoon" onclick="clickRaccoon()">
 
-    <!-- Menu -->
-    <div id="menu">
-        <button id="spinBtn">Pyöräytä Onnenpyörää</button>
-        <button id="challengeBtn">Haasteet</button>
-    </div>
+  <p>Pisteet: <span id="score">0</span></p>
+  <p id="boost-message"></p>
 
-    <!-- Spin Wheel -->
-    <div id="spin-wheel">
-        <div>Roska</div>
-        <div>Oksi</div>
-        <div>Ruoka</div>
-        <div>Pesukarhun Höyhen</div>
-        <div>Pisteitä</div>
-        <div>Bonus</div>
-        <div>Uusi Klippi</div>
-    </div>
+  <div class="menu">
+    <button class="button" onclick="toggleWheel()">Pyöräytä onnenpyörää</button>
+    <button class="button" onclick="toggleChallenges()">Haasteet</button>
+  </div>
 
-    <!-- Challenge Section -->
-    <div class="challenge-items" id="challengeItems">
-        <h2>Kerää esineitä!</h2>
-        <ul>
-            <li id="trash">Roska: 0</li>
-            <li id="stick">Oksi: 0</li>
-            <li id="food">Ruoka: 0</li>
-            <li id="fur">Pesukarhun Höyhen: 0</li>
-        </ul>
-        <button onclick="collectItem()">Kerää tavara</button>
-    </div>
+  <div id="wheel-container">
+    <div id="wheel"></div>
+    <button class="button" onclick="spinWheel()">Pyöräytä</button>
+    <p id="reward"></p>
+  </div>
 
-    <!-- Script -->
-    <script>
-        let spinBtn = document.getElementById('spinBtn');
-        let challengeBtn = document.getElementById('challengeBtn');
-        let spinWheel = document.getElementById('spin-wheel');
-        let challengeItems = document.getElementById('challengeItems');
-        let trashCount = 0, stickCount = 0, foodCount = 0, furCount = 0;
+  <div id="challenges">
+    <div class="challenge-item">Roskia</div>
+    <div class="challenge-item">Oksia</div>
+    <div class="challenge-item">Ruokaa</div>
+    <div class="challenge-item">Kimalteita</div>
+    <div class="challenge-item">Varastettu lohi</div>
+    <div class="challenge-item">Vanhat kengät</div>
+    <div class="challenge-item">Nöyhtää</div>
+  </div>
 
-        // Handle Spin Button
-        spinBtn.onclick = function() {
-            spinWheel.style.display = 'block';  // Show spin wheel
-            let degrees = Math.floor(Math.random() * 360);
-            spinWheel.style.transition = 'transform 3s ease-out';
-            spinWheel.style.transform = `rotate(${degrees}deg)`;  // Rotate the wheel
-            setTimeout(function() {
-                let prizeIndex = Math.floor(degrees / 51.42); // Divide the wheel into 7 sections
-                alert('Onnenpyörästä voitat: ' + spinWheel.children[prizeIndex].innerText);
-            }, 3000);  // After spinning ends, show prize
-        };
+  <script>
+    let score = 0;
+    let multiplier = 1;
+    let turbo = false;
 
-        // Handle Challenge Button
-        challengeBtn.onclick = function() {
-            challengeItems.style.display = 'block';  // Show challenge section
-        };
+    function clickRaccoon() {
+      score += multiplier;
+      document.getElementById("score").textContent = score;
 
-        // Collect an item
-        function collectItem() {
-            let items = ['trash', 'stick', 'food', 'fur'];
-            let randomItem = items[Math.floor(Math.random() * items.length)];
-            document.getElementById(randomItem).innerText = randomItem.charAt(0).toUpperCase() + randomItem.slice(1) + ': ' + (++eval(randomItem) );
-        }
-    </script>
+      if (turbo) {
+        score += multiplier * 2;
+        document.getElementById("boost-message").textContent = "TurboTehostus Aktiivinen!";
+        setTimeout(() => document.getElementById("boost-message").textContent = "", 1500);
+      }
+
+      // Ääni
+      const clickSound = new Audio("https://www.soundjay.com/buttons/button-16.mp3");
+      clickSound.play();
+    }
+
+    function toggleWheel() {
+      const wheel = document.getElementById("wheel-container");
+      wheel.style.display = wheel.style.display === "block" ? "none" : "block";
+    }
+
+    function toggleChallenges() {
+      const ch = document.getElementById("challenges");
+      ch.style.display = ch.style.display === "block" ? "none" : "block";
+    }
+
+    function spinWheel() {
+      const wheel = document.getElementById("wheel");
+      wheel.style.animation = "spin 4s ease-out";
+
+      setTimeout(() => {
+        wheel.style.animation = "none";
+        const rewards = ["+10 pistettä", "x2 klikkeri", "Turbo!", "Tyhjä arpa", "x5 boost!", "50 pistettä!", "Mysteeriesine"];
+        const chosen = rewards[Math.floor(Math.random() * rewards.length)];
+        document.getElementById("reward").textContent = "Voitit: " + chosen;
+
+        // Bonus
+        if (chosen === "x2 klikkeri") multiplier *= 2;
+        if (chosen === "Turbo!") turbo = true;
+        if (chosen === "50 pistettä!") score += 50;
+
+        setTimeout(() => turbo = false, 5000);
+      }, 4000);
+
+      // Ääni
+      const spinSound = new Audio("https://www.soundjay.com/misc/sounds/spin-1.mp3");
+      spinSound.play();
+    }
+  </script>
 </body>
 </html>
