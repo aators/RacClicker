@@ -7,7 +7,7 @@
     body {
       background-color: black;
       color: violet;
-      font-family: 'Georgia', serif;
+      font-family: 'Creepster', cursive, sans-serif; /* Goottimainen fontti */
       text-align: center;
       margin: 0;
       padding: 0;
@@ -97,6 +97,18 @@
       font-weight: bold;
       color: yellow;
     }
+
+    #challenges-table {
+      margin-top: 20px;
+      color: violet;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #challenges-table th, #challenges-table td {
+      padding: 10px;
+      border: 1px solid violet;
+    }
   </style>
 </head>
 <body>
@@ -127,10 +139,32 @@
     <div class="challenge-item" onclick="collectItem('Nöyhtää')">Nöyhtää</div>
   </div>
 
+  <table id="challenges-table">
+    <thead>
+      <tr>
+        <th>Esine</th>
+        <th>Määrä</th>
+      </tr>
+    </thead>
+    <tbody id="challenges-table-body">
+      <!-- Kerätyt esineet lisätään tänne -->
+    </tbody>
+  </table>
+
   <script>
     let score = 0;
     let multiplier = 1;
     let turbo = false;
+
+    const collectedItems = {
+      "Roskia": 0,
+      "Oksia": 0,
+      "Ruokaa": 0,
+      "Kimalteita": 0,
+      "Varastettu lohi": 0,
+      "Vanhat kengät": 0,
+      "Nöyhtää": 0
+    };
 
     function clickRaccoon() {
       score += multiplier;
@@ -189,8 +223,28 @@
     }
 
     function collectItem(item) {
+      collectedItems[item]++;
+      updateCollectedItemsTable();
       alert(`Keräsit: ${item}`);
-      // Esineet voi olla osa tulevaa pistelaskua tai muuta peliin liittyvää
+    }
+
+    function updateCollectedItemsTable() {
+      const tableBody = document.getElementById("challenges-table-body");
+      tableBody.innerHTML = ""; // Tyhjennetään taulukko ennen päivitystä
+
+      // Lisätään kaikki kerätyt esineet taulukkoon
+      for (const [item, amount] of Object.entries(collectedItems)) {
+        const row = document.createElement("tr");
+        const itemCell = document.createElement("td");
+        const amountCell = document.createElement("td");
+
+        itemCell.textContent = item;
+        amountCell.textContent = amount;
+
+        row.appendChild(itemCell);
+        row.appendChild(amountCell);
+        tableBody.appendChild(row);
+      }
     }
   </script>
 </body>
