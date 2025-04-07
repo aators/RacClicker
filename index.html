@@ -2,7 +2,7 @@
 <html lang="fi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
   <title>Raccoon Clicker</title>
   <style>
     body {
@@ -12,6 +12,7 @@
       text-align: center;
       margin: 0;
       padding: 0;
+      overflow: hidden;
     }
 
     h1 {
@@ -19,10 +20,11 @@
       font-size: 2em;
       text-shadow: 0 0 10px red;
       font-family: 'Creepster', cursive;
+      margin: 20px;
     }
 
     #raccoon {
-      width: 120px;
+      width: 150px;
       height: auto;
       cursor: pointer;
       transition: transform 0.1s ease;
@@ -35,7 +37,7 @@
 
     .button {
       margin: 10px;
-      padding: 10px 20px;
+      padding: 12px 24px;
       font-size: 16px;
       font-weight: bold;
       background-color: #222;
@@ -65,7 +67,7 @@
       background-color: #333;
       margin: auto;
       padding: 20px;
-      width: 80%;
+      width: 90%;
       max-width: 400px;
       border-radius: 8px;
       text-align: center;
@@ -139,11 +141,35 @@
 
     @media (max-width: 600px) {
       #raccoon {
-        width: 100px;
+        width: 120px;
       }
 
       .button {
         font-size: 14px;
+        padding: 10px 20px;
+      }
+
+      #wheel {
+        width: 130px;
+        height: 130px;
+      }
+
+      #menu-content {
+        width: 90%;
+      }
+    }
+
+    @media (max-width: 400px) {
+      h1 {
+        font-size: 1.5em;
+      }
+
+      #raccoon {
+        width: 100px;
+      }
+
+      .button {
+        font-size: 12px;
         padding: 8px 16px;
       }
 
@@ -154,7 +180,7 @@
 
       #menu-content {
         width: 90%;
-        max-width: 350px;
+        max-width: 300px;
       }
     }
   </style>
@@ -284,15 +310,22 @@
         collectedItems[item]++;
       }
 
-      updateCollectedItemsTable();
+      updateItemTable();
     }
 
-    function updateCollectedItemsTable() {
+    function updateItemTable() {
       const tableBody = document.getElementById("collected-items-body");
       tableBody.innerHTML = "";
-      for (let item in collectedItems) {
+      for (const item in collectedItems) {
         const row = document.createElement("tr");
-        row.innerHTML = `<td>${item}</td><td>${collectedItems[item]}</td>`;
+        const itemCell = document.createElement("td");
+        const countCell = document.createElement("td");
+
+        itemCell.textContent = item;
+        countCell.textContent = collectedItems[item];
+
+        row.appendChild(itemCell);
+        row.appendChild(countCell);
         tableBody.appendChild(row);
       }
     }
@@ -302,6 +335,7 @@
         score -= 100;
         multiplier *= 2;
         document.getElementById("score").textContent = score;
+        alert("Ostit tuplaklikkerin!");
       }
     }
 
@@ -310,6 +344,7 @@
         score -= 200;
         turbo = true;
         document.getElementById("score").textContent = score;
+        alert("Ostit turbo tehostuksen!");
       }
     }
   </script>
