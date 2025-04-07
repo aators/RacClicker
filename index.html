@@ -1,201 +1,177 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Raccoon Clicker</title>
   <style>
     body {
-      background-color: #000;
-      color: #fff;
-      font-family: 'Creepster', cursive;
+      background-color: black;
+      color: violet;
+      font-family: 'Georgia', serif;
       text-align: center;
       margin: 0;
       padding: 0;
     }
 
     h1 {
-      color: #9b59b6;
+      color: #8b00ff;
       font-size: 3em;
-      margin: 20px 0;
+      text-shadow: 0 0 10px #8b00ff;
+    }
+
+    #raccoon {
+      width: 250px;
+      height: auto;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    #raccoon:active {
+      transform: scale(1.1);
     }
 
     .button {
-      background-color: #9b59b6;
-      color: white;
-      border: none;
-      padding: 10px 20px;
       margin: 10px;
-      font-size: 1.2em;
-      border-radius: 10px;
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      background-color: #222;
+      color: violet;
+      border: 2px solid violet;
+      border-radius: 8px;
       cursor: pointer;
-    }
-
-    .clicker {
-      margin-top: 30px;
-    }
-
-    #clickCount {
-      font-size: 2em;
-      margin: 10px;
     }
 
     .menu {
-      margin: 30px 0;
+      margin-top: 20px;
     }
 
-    #wheelContainer, #challengesContainer {
+    #wheel-container, #challenges {
       display: none;
-      margin: 20px auto;
+      margin-top: 30px;
     }
 
     #wheel {
-      position: relative;
       width: 300px;
       height: 300px;
       border-radius: 50%;
-      border: 8px solid #fff;
-      margin: 20px auto;
+      border: 10px solid #444;
+      margin: 0 auto;
+      position: relative;
       background: conic-gradient(
-        red 0deg 51.4deg,
-        black 51.4deg 102.8deg,
-        yellow 102.8deg 154.2deg,
-        red 154.2deg 205.6deg,
-        black 205.6deg 257deg,
-        yellow 257deg 308.4deg,
-        red 308.4deg 360deg
+        red 0deg 51deg,
+        black 51deg 102deg,
+        yellow 102deg 153deg,
+        red 153deg 204deg,
+        black 204deg 255deg,
+        yellow 255deg 306deg,
+        red 306deg 360deg
       );
-      transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+      animation: none;
     }
 
-    .wheel-button {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #fff;
-      color: #000;
-      border: none;
-      border-radius: 50%;
-      width: 100px;
-      height: 100px;
-      font-size: 1em;
-      font-family: 'Arial', sans-serif;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    #prizeText {
-      margin-top: 10px;
-      font-size: 1.5em;
-    }
-
-    .challenge-list {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(3600deg); }
     }
 
     .challenge-item {
-      background-color: #333;
-      padding: 15px;
-      border-radius: 12px;
-      font-size: 1.2em;
-      box-shadow: 0 0 10px #9b59b6;
-      cursor: pointer;
-      transition: transform 0.2s;
+      margin: 10px;
+      padding: 10px;
+      border: 2px dashed violet;
+      border-radius: 10px;
+      display: inline-block;
+      color: white;
     }
 
-    .challenge-item:hover {
-      transform: scale(1.1);
-      background-color: #444;
+    #boost-message {
+      color: yellow;
+      font-weight: bold;
+      font-size: 18px;
+      margin-top: 10px;
     }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
 </head>
 <body>
-
   <h1>Raccoon Clicker</h1>
+  <img id="raccoon" src="https://i.ibb.co/Xx9zLV5N/Hnet-com-image-1.jpg" alt="Raccoon" onclick="clickRaccoon()">
 
-  <div class="clicker">
-    <button class="button" onclick="clickRaccoon()">Klikkaa!</button>
-    <div id="clickCount">Pisteet: 0</div>
-  </div>
+  <p>Pisteet: <span id="score">0</span></p>
+  <p id="boost-message"></p>
 
   <div class="menu">
-    <button class="button" onclick="toggleWheel()">Onnenpyörä</button>
+    <button class="button" onclick="toggleWheel()">Pyöräytä onnenpyörää</button>
     <button class="button" onclick="toggleChallenges()">Haasteet</button>
   </div>
 
-  <!-- Onnenpyörä -->
-  <div id="wheelContainer">
-    <div id="wheel">
-      <button class="wheel-button" onclick="spinWheel()">Pyöräytä</button>
-    </div>
-    <div id="prizeText">Pyöräytä ja voita!</div>
+  <div id="wheel-container">
+    <div id="wheel"></div>
+    <button class="button" onclick="spinWheel()">Pyöräytä</button>
+    <p id="reward"></p>
   </div>
 
-  <!-- Haasteet -->
-  <div id="challengesContainer">
-    <h2>Kerää esineitä</h2>
-    <div class="challenge-list">
-      <div class="challenge-item" onclick="collectItem('Roska')">Roska</div>
-      <div class="challenge-item" onclick="collectItem('Oksa')">Oksa</div>
-      <div class="challenge-item" onclick="collectItem('Ruoka')">Ruoka</div>
-      <div class="challenge-item" onclick="collectItem('Pullonkorkki')">Pullonkorkki</div>
-    </div>
-    <div id="collectedItems"></div>
+  <div id="challenges">
+    <div class="challenge-item">Roskia</div>
+    <div class="challenge-item">Oksia</div>
+    <div class="challenge-item">Ruokaa</div>
+    <div class="challenge-item">Kimalteita</div>
+    <div class="challenge-item">Varastettu lohi</div>
+    <div class="challenge-item">Vanhat kengät</div>
+    <div class="challenge-item">Nöyhtää</div>
   </div>
 
   <script>
-    let clicks = 0;
+    let score = 0;
     let multiplier = 1;
+    let turbo = false;
 
     function clickRaccoon() {
-      clicks += multiplier;
-      document.getElementById('clickCount').innerText = "Pisteet: " + clicks;
+      score += multiplier;
+      document.getElementById("score").textContent = score;
+
+      if (turbo) {
+        score += multiplier * 2;
+        document.getElementById("boost-message").textContent = "TurboTehostus Aktiivinen!";
+        setTimeout(() => document.getElementById("boost-message").textContent = "", 1500);
+      }
+
+      // Ääni
+      const clickSound = new Audio("https://www.soundjay.com/buttons/button-16.mp3");
+      clickSound.play();
     }
 
     function toggleWheel() {
-      document.getElementById('wheelContainer').style.display = 'block';
-      document.getElementById('challengesContainer').style.display = 'none';
+      const wheel = document.getElementById("wheel-container");
+      wheel.style.display = wheel.style.display === "block" ? "none" : "block";
     }
 
     function toggleChallenges() {
-      document.getElementById('challengesContainer').style.display = 'block';
-      document.getElementById('wheelContainer').style.display = 'none';
+      const ch = document.getElementById("challenges");
+      ch.style.display = ch.style.display === "block" ? "none" : "block";
     }
 
     function spinWheel() {
       const wheel = document.getElementById("wheel");
-      const angle = Math.floor(Math.random() * 360 + 1440); // 1440 = 4 full spins
-      wheel.style.transform = `rotate(${angle}deg)`;
+      wheel.style.animation = "spin 4s ease-out";
 
       setTimeout(() => {
-        const section = Math.floor(((angle % 360) / 51.4)) % 7;
-        let result = "";
-        switch (section) {
-          case 0: result = "Voitit 100 pistettä!"; clicks += 100; break;
-          case 1: result = "Tupla-Klikkaus Aktivoitu!"; multiplier = 2; break;
-          case 2: result = "Teho-Klikkaus Aktivoitu!"; multiplier = 5; setTimeout(() => { multiplier = 1; }, 10000); break;
-          case 3: result = "Voitit 50 pistettä!"; clicks += 50; break;
-          case 4: result = "Hävisit 10 pistettä!"; clicks = Math.max(0, clicks - 10); break;
-          case 5: result = "Sait yllätyspaketin!"; break;
-          case 6: result = "Voitit 500 pistettä!"; clicks += 500; break;
-        }
-        document.getElementById("clickCount").innerText = "Pisteet: " + clicks;
-        document.getElementById("prizeText").innerText = result;
-      }, 4000);
-    }
+        wheel.style.animation = "none";
+        const rewards = ["+10 pistettä", "x2 klikkeri", "Turbo!", "Tyhjä arpa", "x5 boost!", "50 pistettä!", "Mysteeriesine"];
+        const chosen = rewards[Math.floor(Math.random() * rewards.length)];
+        document.getElementById("reward").textContent = "Voitit: " + chosen;
 
-    function collectItem(item) {
-      const list = document.getElementById("collectedItems");
-      const el = document.createElement("div");
-      el.innerText = "Keräsit: " + item;
-      list.appendChild(el);
+        // Bonus
+        if (chosen === "x2 klikkeri") multiplier *= 2;
+        if (chosen === "Turbo!") turbo = true;
+        if (chosen === "50 pistettä!") score += 50;
+
+        setTimeout(() => turbo = false, 5000);
+      }, 4000);
+
+      // Ääni
+      const spinSound = new Audio("https://www.soundjay.com/misc/sounds/spin-1.mp3");
+      spinSound.play();
     }
   </script>
-
 </body>
 </html>
