@@ -14,9 +14,9 @@
     }
 
     h1 {
-      color: #8b00ff;
+      color: red; /* Raccoon Clicker fontin väri punaiseksi */
       font-size: 3em;
-      text-shadow: 0 0 10px #8b00ff;
+      text-shadow: 0 0 10px red;
     }
 
     #raccoon {
@@ -46,7 +46,7 @@
       margin-top: 20px;
     }
 
-    #wheel-container, #challenges {
+    #wheel-container, #challenges, #items-table {
       display: none;
       margin-top: 30px;
     }
@@ -109,6 +109,33 @@
       padding: 10px;
       border: 1px solid violet;
     }
+
+    #items-table {
+      margin-top: 20px;
+      color: violet;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #items-table th, #items-table td {
+      padding: 10px;
+      border: 1px solid violet;
+    }
+
+    .store-item {
+      margin: 10px;
+      padding: 10px;
+      font-size: 18px;
+      color: yellow;
+      border: 2px solid violet;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .store-item.disabled {
+      color: gray;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
@@ -119,16 +146,19 @@
   <p id="boost-message"></p>
 
   <div class="menu">
-    <button class="button" onclick="toggleWheel()">Pyöräytä onnenpyörää</button>
+    <button class="button" onclick="toggleWheel()">Onnenpyörä</button>
     <button class="button" onclick="toggleChallenges()">Haasteet</button>
+    <button class="button" onclick="toggleStore()">Kauppa</button>
   </div>
 
+  <!-- Onnenpyörä -->
   <div id="wheel-container">
     <div id="wheel"></div>
     <button class="button" onclick="spinWheel()">Pyöräytä</button>
     <p id="reward"></p>
   </div>
 
+  <!-- Haasteet -->
   <div id="challenges">
     <div class="challenge-item" onclick="collectItem('Roskia')">Roskia</div>
     <div class="challenge-item" onclick="collectItem('Oksia')">Oksia</div>
@@ -139,6 +169,7 @@
     <div class="challenge-item" onclick="collectItem('Nöyhtää')">Nöyhtää</div>
   </div>
 
+  <!-- Esineet -->
   <table id="challenges-table">
     <thead>
       <tr>
@@ -151,10 +182,17 @@
     </tbody>
   </table>
 
+  <!-- Kauppa -->
+  <div id="store">
+    <div class="store-item" onclick="buyDoubleClick()">Osta Tuplaklikkaus (500 pistettä)</div>
+    <div class="store-item" onclick="buyTurboClick()">Osta Tehoklikkaus (1000 pistettä)</div>
+  </div>
+
   <script>
     let score = 0;
     let multiplier = 1;
     let turbo = false;
+    let doubleClick = false;
 
     const collectedItems = {
       "Roskia": 0,
@@ -169,6 +207,10 @@
     function clickRaccoon() {
       score += multiplier;
       document.getElementById("score").textContent = score;
+
+      if (doubleClick) {
+        score += multiplier;
+      }
 
       if (turbo) {
         score += multiplier * 2;
@@ -189,6 +231,11 @@
     function toggleChallenges() {
       const ch = document.getElementById("challenges");
       ch.style.display = ch.style.display === "block" ? "none" : "block";
+    }
+
+    function toggleStore() {
+      const store = document.getElementById("store");
+      store.style.display = store.style.display === "block" ? "none" : "block";
     }
 
     function spinWheel() {
@@ -244,6 +291,28 @@
         row.appendChild(itemCell);
         row.appendChild(amountCell);
         tableBody.appendChild(row);
+      }
+    }
+
+    function buyDoubleClick() {
+      if (score >= 500) {
+        score -= 500;
+        doubleClick = true;
+        document.getElementById("score").textContent = score;
+        alert("Ostit tuplaklikkauksen!");
+      } else {
+        alert("Ei tarpeeksi pisteitä!");
+      }
+    }
+
+    function buyTurboClick() {
+      if (score >= 1000) {
+        score -= 1000;
+        turbo = true;
+        document.getElementById("score").textContent = score;
+        alert("Ostit tehoklikkauksen!");
+      } else {
+        alert("Ei tarpeeksi pisteitä!");
       }
     }
   </script>
