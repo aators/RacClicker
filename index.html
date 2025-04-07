@@ -1,42 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Raccoon Clicker</title>
-  <style>
-    body {
-      background-color: #1a1a1a;
-      color: #fff;
-      text-align: center;
-      font-family: 'Courier New', monospace;
-    }
-    #raccoon {
-      width: 200px;
-      cursor: pointer;
-      filter: drop-shadow(0 0 10px #6e6e6e);
-    }
-    .score {
-      font-size: 24px;
-      margin-top: 20px;
-    }
-  </style>
-</head>
-<body>
-  <h1>Raccoon Clicker</h1>
-  <img id="raccoon" src="raccoon.png" alt="Raccoon">
-  <div class="score">Clicks: <span id="score">0</span></div>
-
-  <script>
-    let score = 0;
-    document.getElementById('raccoon').addEventListener('click', function () {
-      score++;
-      document.getElementById('score').textContent = score;
-    });
-  </script>
-</body>
-</html>
-
-<!DOCTYPE html>
 <html lang="fi">
 <head>
   <meta charset="UTF-8">
@@ -44,10 +6,11 @@
   <title>Raccoin Clicker</title>
   <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
   <style>
+    /* Yleinen sivun ulkoasu */
     body {
-      background-color: #121212;
-      color: #d1d1d1;
-      font-family: 'Righteous', sans-serif;
+      background-color: #121212; /* Tumma tausta */
+      color: #d1d1d1; /* Vaalea teksti */
+      font-family: 'Righteous', sans-serif; /* Gootti-fontti */
       text-align: center;
       margin: 0;
       padding: 0;
@@ -55,33 +18,39 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
     }
 
+    /* Otsikon tyyli */
     h1 {
-      color: #ff6347;
+      color: #ff6347; /* Kirkas punainen väri */
       font-size: 50px;
       margin-bottom: 20px;
-      text-shadow: 0px 0px 20px #ff6347;
+      text-shadow: 0px 0px 20px #ff6347; /* Hehkuva punainen varjo */
     }
 
+    /* Pesukarhun kuva */
     #raccoon {
       width: 250px;
-      cursor: pointer;
+      cursor: pointer; /* Käyttäjä voi klikata kuvaa */
       border-radius: 15px;
-      transition: transform 0.1s ease-in-out;
+      transition: transform 0.1s ease-in-out; /* Animaatio */
     }
 
+    /* Pesukarhun kuva kutistuu klikkauksesta */
     #raccoon:active {
       transform: scale(0.95);
     }
 
+    /* Pisteiden näyttö */
     #score {
       font-size: 30px;
       margin-top: 20px;
       color: #f0f0f0;
-      text-shadow: 0px 0px 15px #ff6347;
+      text-shadow: 0px 0px 15px #ff6347; /* Pisteet erottuvat kirkkaalla varjolla */
     }
 
+    /* Pelin säilö */
     .container {
       display: flex;
       flex-direction: column;
@@ -91,20 +60,22 @@
   </style>
 </head>
 <body>
+  <!-- Pelin rakenne -->
   <div class="container">
     <h1>Raccoin Clicker</h1>
-    <img id="raccoon" src="raccoon.png" alt="Raccoon">
-    <div id="score">Score: 0</div>
+    <img id="raccoon" src="raccoon.png" alt="Raccoon"> <!-- Pesukarhun kuva -->
+    <div id="score">Score: 0</div> <!-- Pisteet -->
   </div>
 
   <script>
-    let score = 0;
-    const scoreEl = document.getElementById("score");
-    const raccoon = document.getElementById("raccoon");
+    let score = 0; // Alkuperäinen pistemäärä
+    const scoreEl = document.getElementById("score"); // Piste-elementti
+    const raccoon = document.getElementById("raccoon"); // Pesukarhun kuva-elementti
 
+    // Kuuntelija, joka reagoi pesukarhun klikkaukseen
     raccoon.addEventListener("click", () => {
-      score++;
-      scoreEl.textContent = "Score: " + score;
+      score++; // Kasvata pistemäärää yhdellä
+      scoreEl.textContent = "Score: " + score; // Päivitä pisteet näyttöön
     });
   </script>
 </body>
