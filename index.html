@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Raccoon Clicker</title>
+  <style>
+    body {
+      background-color: #1a1a1a;
+      color: #fff;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+    }
+    #raccoon {
+      width: 200px;
+      cursor: pointer;
+      filter: drop-shadow(0 0 10px #6e6e6e);
+    }
+    .score {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Raccoon Clicker</h1>
+  <img id="raccoon" src="raccoon.png" alt="Raccoon">
+  <div class="score">Clicks: <span id="score">0</span></div>
+
+  <script>
+    let score = 0;
+    document.getElementById('raccoon').addEventListener('click', function () {
+      score++;
+      document.getElementById('score').textContent = score;
+    });
+  </script>
+</body>
+</html>
