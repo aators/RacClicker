@@ -2,7 +2,7 @@
 <html lang="fi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Raccoon Clicker</title>
   <style>
     body {
@@ -12,82 +12,64 @@
       text-align: center;
       margin: 0;
       padding: 0;
-      overflow: hidden;
     }
 
     h1 {
       color: red;
-      font-size: 12em; /* Kolminkertaistettu otsikko */
-      text-shadow: 0 0 10px red;
-      font-family: 'Creepster', cursive;
-      margin: 20px;
-    }
-
-    #raccoon {
-      width: 900px; /* Kolminkertaistettu kuva */
-      height: auto;
-      cursor: pointer;
-      transition: transform 0.1s ease;
+      font-size: 9.6em; /* Pienennetty 20 % */
+      text-shadow: 0 0 20px red;
       margin-top: 20px;
     }
 
+    #raccoon {
+      width: 720px; /* Aiemmin 900px */
+      height: auto;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+      margin-top: 10px;
+    }
+
     #raccoon:active {
-      transform: scale(1.1);
+      transform: scale(1.05);
     }
 
     .button {
-      margin: 45px;
-      padding: 36px 72px; /* Kolminkertaistettu napin koko */
-      font-size: 48px; /* Kolminkertaistettu fonttikoko */
+      display: block;
+      margin: 20px auto;
+      padding: 28px 58px; /* Pienennetty 20 % */
+      font-size: 38px;
       font-weight: bold;
       background-color: #222;
       color: violet;
-      border: 6px solid violet; /* Kolminkertaistettu reunus */
-      border-radius: 24px; /* Kolminkertaistettu kulmat */
+      border: 5px solid violet;
+      border-radius: 20px;
       cursor: pointer;
-      display: block;
       width: 80%;
-      max-width: 900px;
-      margin-left: auto;
-      margin-right: auto;
     }
 
-    .button:hover {
-      background-color: #444;
+    #score, #boost-message {
+      font-size: 60px;
     }
 
-    #menu-modal {
+    #menu {
+      margin-top: 30px;
+    }
+
+    #submenu {
       display: none;
-      position: fixed;
-      z-index: 1;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      padding-top: 50px;
+      margin-top: 20px;
     }
 
-    #menu-content {
-      background-color: #333;
-      margin: auto;
-      padding: 60px;
-      width: 90%;
-      max-width: 1200px;
-      border-radius: 24px;
-      text-align: center;
-    }
-
-    #wheel-container, #items-container {
+    #wheel-container {
       display: none;
-      margin-top: 60px;
+      margin-top: 30px;
     }
 
     #wheel {
-      width: 540px; /* Kolminkertaistettu pyörän koko */
-      height: 540px;
+      width: 480px; /* Aiemmin 600px */
+      height: 480px;
       border-radius: 50%;
-      border: 30px solid #444;
+      border: 10px solid #444;
       margin: 0 auto;
       position: relative;
       background: conic-gradient(
@@ -99,7 +81,6 @@
         yellow 255deg 306deg,
         red 306deg 360deg
       );
-      animation: none;
     }
 
     @keyframes spin {
@@ -107,74 +88,16 @@
       to { transform: rotate(3600deg); }
     }
 
+    #reward {
+      font-size: 40px;
+      margin-top: 20px;
+    }
+
     #boost-message {
       color: yellow;
       font-weight: bold;
-      font-size: 54px; /* Kolminkertaistettu fonttikoko */
-      margin-top: 30px;
-    }
-
-    #collected-items {
-      color: white;
-      font-size: 54px; /* Kolminkertaistettu fonttikoko */
-      margin-top: 60px;
-      display: inline-block;
-      max-width: 90%;
-      text-align: left;
-    }
-
-    #collected-items div {
-      margin-bottom: 15px; /* Kolminkertaistettu väli */
-    }
-
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 9em; /* Kolminkertaistettu mobiilin otsikko */
-      }
-
-      #raccoon {
-        width: 750px; /* Kolminkertaistettu kuva mobiililla */
-      }
-
-      .button {
-        font-size: 36px; /* Kolminkertaistettu fonttikoko mobiilille */
-        padding: 30px 60px; /* Kolminkertaistettu mobiilin napin koko */
-      }
-
-      #wheel {
-        width: 450px; /* Kolminkertaistettu pyörän koko mobiililla */
-        height: 450px;
-      }
-
-      #menu-content {
-        width: 90%;
-        max-width: 1200px;
-      }
-    }
-
-    @media (max-width: 400px) {
-      h1 {
-        font-size: 8em; /* Kolminkertaistettu mobiilille vielä enemmän */
-      }
-
-      #raccoon {
-        width: 600px; /* Kolminkertaistettu kuva pienellä mobiililla */
-      }
-
-      .button {
-        font-size: 30px; /* Kolminkertaistettu fonttikoko pienellä mobiililla */
-        padding: 24px 48px; /* Kolminkertaistettu mobiilin napin koko */
-      }
-
-      #wheel {
-        width: 360px; /* Kolminkertaistettu pyörän koko pienellä mobiililla */
-        height: 360px;
-      }
-
-      #menu-content {
-        width: 90%;
-        max-width: 900px;
-      }
+      font-size: 40px;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -182,22 +105,16 @@
   <h1>Raccoon Clicker</h1>
   <img id="raccoon" src="https://i.ibb.co/Xx9zLV5N/Hnet-com-image-1.jpg" alt="Raccoon" onclick="clickRaccoon()">
 
-  <p>Pisteet: <span id="score">0</span></p>
+  <p style="font-size: 50px;">Pisteet: <span id="score">0</span></p>
   <p id="boost-message"></p>
 
-  <div class="menu">
-    <button class="button" onclick="openMenu()">Valikko</button>
-    <button class="button" onclick="buyDoubleClick()">Osta tuplaklikkaus (100 pistettä)</button>
-    <button class="button" onclick="buyTurboClick()">Osta tehoklikkaus (200 pistettä)</button>
-  </div>
-
-  <!-- Menu Modal -->
-  <div id="menu-modal">
-    <div id="menu-content">
-      <button class="button" onclick="toggleWheel()">Pyöräytä onnenpyörää</button>
-      <button class="button" onclick="toggleItems()">Kerätyt Esineet</button>
-      <button class="button" onclick="closeMenu()">Sulje Valikko</button>
+  <div id="menu">
+    <button class="button" onclick="toggleMenu()">Valikko</button>
+    <div id="submenu">
+      <button class="button" onclick="toggleWheel()">Onnenpyörä</button>
     </div>
+    <button class="button" onclick="buyDoubleClick()">Osta tuplaklikkaus (100p)</button>
+    <button class="button" onclick="buyTurboClick()">Osta tehoklikkaus (250p)</button>
   </div>
 
   <div id="wheel-container">
@@ -206,37 +123,29 @@
     <p id="reward"></p>
   </div>
 
-  <div id="items-container">
-    <div id="collected-items"></div>
-  </div>
-
   <script>
     let score = 0;
     let multiplier = 1;
     let turbo = false;
-    let collectedItems = {};
 
     function clickRaccoon() {
-      score += multiplier;
+      let points = multiplier;
+      if (turbo) points *= 3;
+      score += points;
       document.getElementById("score").textContent = score;
 
       if (turbo) {
-        score += multiplier * 2;
-        document.getElementById("boost-message").textContent = "TurboTehostus Aktiivinen!";
-        setTimeout(() => document.getElementById("boost-message").textContent = "", 1500);
+        document.getElementById("boost-message").textContent = "Tehoklikkaus Aktiivinen!";
+        setTimeout(() => document.getElementById("boost-message").textContent = "", 1000);
       }
 
-      // Ääni
       const clickSound = new Audio("https://www.soundjay.com/buttons/button-16.mp3");
       clickSound.play();
     }
 
-    function openMenu() {
-      document.getElementById("menu-modal").style.display = "block";
-    }
-
-    function closeMenu() {
-      document.getElementById("menu-modal").style.display = "none";
+    function toggleMenu() {
+      const menu = document.getElementById("submenu");
+      menu.style.display = menu.style.display === "block" ? "none" : "block";
     }
 
     function toggleWheel() {
@@ -244,68 +153,48 @@
       wheel.style.display = wheel.style.display === "block" ? "none" : "block";
     }
 
-    function toggleItems() {
-      const items = document.getElementById("items-container");
-      items.style.display = items.style.display === "block" ? "none" : "block";
+    function spinWheel() {
+      const wheel = document.getElementById("wheel");
+      wheel.style.animation = "spin 4s ease-out";
+      setTimeout(() => {
+        wheel.style.animation = "none";
+        const rewards = ["+10 pistettä", "x2 klikkeri", "Turbo!", "Tyhjä arpa", "x5 boost!", "50 pistettä!", "Mysteeriesine"];
+        const chosen = rewards[Math.floor(Math.random() * rewards.length)];
+        document.getElementById("reward").textContent = "Voitit: " + chosen;
+
+        if (chosen === "+10 pistettä") score += 10;
+        if (chosen === "x2 klikkeri") multiplier *= 2;
+        if (chosen === "Turbo!") turbo = true;
+        if (chosen === "x5 boost!") multiplier *= 5;
+        if (chosen === "50 pistettä!") score += 50;
+
+        setTimeout(() => turbo = false, 5000);
+      }, 4000);
+
+      const spinSound = new Audio("https://www.soundjay.com/misc/sounds/spin-1.mp3");
+      spinSound.play();
     }
 
     function buyDoubleClick() {
       if (score >= 100) {
         score -= 100;
-        multiplier = 2;
+        multiplier *= 2;
         document.getElementById("score").textContent = score;
+        alert("Tuplaklikkaus aktivoitu!");
+      } else {
+        alert("Ei tarpeeksi pisteitä!");
       }
     }
 
     function buyTurboClick() {
-      if (score >= 200) {
-        score -= 200;
+      if (score >= 250) {
+        score -= 250;
         turbo = true;
         document.getElementById("score").textContent = score;
-      }
-    }
-
-    function collectItem(item) {
-      if (!collectedItems[item]) {
-        collectedItems[item] = 1;
+        alert("Tehoklikkaus aktivoitu 5 sekunniksi!");
+        setTimeout(() => turbo = false, 5000);
       } else {
-        collectedItems[item]++;
-      }
-
-      updateCollectedItems();
-    }
-
-    function updateCollectedItems() {
-      const itemsContainer = document.getElementById("collected-items");
-      itemsContainer.innerHTML = '';
-      for (const item in collectedItems) {
-        itemsContainer.innerHTML += `${item}: ${collectedItems[item]}<br>`;
-      }
-    }
-
-    function spinWheel() {
-      const wheel = document.getElementById("wheel");
-      wheel.style.animation = "spin 3s ease-out";
-      setTimeout(() => {
-        wheel.style.animation = "none";  // Stop spinning
-        const randomDegree = Math.floor(Math.random() * 360);
-        wheel.style.transform = `rotate(${randomDegree}deg)`;
-        reward();
-      }, 3000);
-    }
-
-    function reward() {
-      const rewardMessage = document.getElementById("reward");
-      const rand = Math.random();
-      if (rand < 0.33) {
-        collectItem("Yksisarvinen");
-        rewardMessage.textContent = "Voitit Yksisarvisen!";
-      } else if (rand < 0.66) {
-        collectItem("Kultaraha");
-        rewardMessage.textContent = "Voitit Kultarahan!";
-      } else {
-        collectItem("Kukkia");
-        rewardMessage.textContent = "Voitit Kukkia!";
+        alert("Ei tarpeeksi pisteitä!");
       }
     }
   </script>
