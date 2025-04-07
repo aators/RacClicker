@@ -17,14 +17,14 @@
 
     h1 {
       color: red;
-      font-size: 4em; /* Suurentaa otsikon kokoa */
+      font-size: 12em; /* Kolminkertaistettu otsikko */
       text-shadow: 0 0 10px red;
       font-family: 'Creepster', cursive;
       margin: 20px;
     }
 
     #raccoon {
-      width: 300px; /* Suurentaa kuvan kokoa */
+      width: 900px; /* Kolminkertaistettu kuva */
       height: auto;
       cursor: pointer;
       transition: transform 0.1s ease;
@@ -36,18 +36,18 @@
     }
 
     .button {
-      margin: 15px;
-      padding: 12px 24px;
-      font-size: 16px;
+      margin: 45px;
+      padding: 36px 72px; /* Kolminkertaistettu napin koko */
+      font-size: 48px; /* Kolminkertaistettu fonttikoko */
       font-weight: bold;
       background-color: #222;
       color: violet;
-      border: 2px solid violet;
-      border-radius: 8px;
+      border: 6px solid violet; /* Kolminkertaistettu reunus */
+      border-radius: 24px; /* Kolminkertaistettu kulmat */
       cursor: pointer;
       display: block;
       width: 80%;
-      max-width: 300px;
+      max-width: 900px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -71,23 +71,23 @@
     #menu-content {
       background-color: #333;
       margin: auto;
-      padding: 20px;
+      padding: 60px;
       width: 90%;
-      max-width: 400px;
-      border-radius: 8px;
+      max-width: 1200px;
+      border-radius: 24px;
       text-align: center;
     }
 
     #wheel-container, #items-container {
       display: none;
-      margin-top: 20px;
+      margin-top: 60px;
     }
 
     #wheel {
-      width: 180px;
-      height: 180px;
+      width: 540px; /* Kolminkertaistettu pyörän koko */
+      height: 540px;
       border-radius: 50%;
-      border: 10px solid #444;
+      border: 30px solid #444;
       margin: 0 auto;
       position: relative;
       background: conic-gradient(
@@ -110,69 +110,70 @@
     #boost-message {
       color: yellow;
       font-weight: bold;
-      font-size: 18px;
-      margin-top: 10px;
+      font-size: 54px; /* Kolminkertaistettu fonttikoko */
+      margin-top: 30px;
     }
 
     #collected-items {
       color: white;
-      font-size: 18px;
-      margin-top: 20px;
+      font-size: 54px; /* Kolminkertaistettu fonttikoko */
+      margin-top: 60px;
       display: inline-block;
       max-width: 90%;
       text-align: left;
     }
 
     #collected-items div {
-      margin-bottom: 5px;
+      margin-bottom: 15px; /* Kolminkertaistettu väli */
     }
 
     @media (max-width: 600px) {
       h1 {
-        font-size: 3em; /* Otsikon kokoa pienennetty hieman mobiilille */
+        font-size: 9em; /* Kolminkertaistettu mobiilin otsikko */
       }
 
       #raccoon {
-        width: 250px; /* Pienentää kuvaa mobiililaitteilla */
+        width: 750px; /* Kolminkertaistettu kuva mobiililla */
       }
 
       .button {
-        font-size: 14px;
-        padding: 10px 20px;
+        font-size: 36px; /* Kolminkertaistettu fonttikoko mobiilille */
+        padding: 30px 60px; /* Kolminkertaistettu mobiilin napin koko */
       }
 
       #wheel {
-        width: 150px;
-        height: 150px;
+        width: 450px; /* Kolminkertaistettu pyörän koko mobiililla */
+        height: 450px;
       }
 
       #menu-content {
         width: 90%;
+        max-width: 1200px;
       }
     }
 
     @media (max-width: 400px) {
       h1 {
-        font-size: 2.5em; /* Otsikon kokoa pienennetty lisää */
+        font-size: 8em; /* Kolminkertaistettu mobiilille vielä enemmän */
       }
 
       #raccoon {
-        width: 200px; /* Kuvan koko pienemmäksi pienillä ruuduilla */
+        width: 600px; /* Kolminkertaistettu kuva pienellä mobiililla */
       }
 
       .button {
-        font-size: 12px;
-        padding: 8px 16px;
+        font-size: 30px; /* Kolminkertaistettu fonttikoko pienellä mobiililla */
+        padding: 24px 48px; /* Kolminkertaistettu mobiilin napin koko */
       }
 
       #wheel {
-        width: 120px;
-        height: 120px;
+        width: 360px; /* Kolminkertaistettu pyörän koko pienellä mobiililla */
+        height: 360px;
       }
 
       #menu-content {
         width: 90%;
-        max-width: 300px;
+        max-width: 900px;
       }
     }
   </style>
@@ -287,12 +288,25 @@
       wheel.style.animation = "spin 3s ease-out";
       setTimeout(() => {
         wheel.style.animation = "none";  // Stop spinning
-        const reward = ["Pisteitä +10", "Pisteitä +20", "Turbo aktivoitu", "Yksi kerätty esine"].random();
-        document.getElementById("reward").textContent = reward;
-        if (reward === "Turbo aktivoitu") {
-          turbo = true;
-        }
+        const randomDegree = Math.floor(Math.random() * 360);
+        wheel.style.transform = `rotate(${randomDegree}deg)`;
+        reward();
       }, 3000);
+    }
+
+    function reward() {
+      const rewardMessage = document.getElementById("reward");
+      const rand = Math.random();
+      if (rand < 0.33) {
+        collectItem("Yksisarvinen");
+        rewardMessage.textContent = "Voitit Yksisarvisen!";
+      } else if (rand < 0.66) {
+        collectItem("Kultaraha");
+        rewardMessage.textContent = "Voitit Kultarahan!";
+      } else {
+        collectItem("Kukkia");
+        rewardMessage.textContent = "Voitit Kukkia!";
+      }
     }
   </script>
 </body>
