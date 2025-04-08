@@ -2,144 +2,244 @@
 <html lang="fi">
 <head>
   <meta charset="UTF-8" />
-  <title>Raccoin Clicker</title>
-  <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Raccoon Clicker</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
+
     body {
-      background-color: #0c0b10;
-      background-image: url('https://www.transparenttextures.com/patterns/dark-denim-3.png');
-      color: #c8a2c8;
-      font-family: 'UnifrakturCook', sans-serif;
-      text-align: center;
       margin: 0;
       padding: 0;
+      background: url('https://www.transparenttextures.com/patterns/dark-denim-3.png'), black;
+      background-size: cover;
+      color: violet;
+      font-family: 'UnifrakturCook', cursive;
+      overflow-x: hidden;
     }
+
     h1 {
-      font-size: 3em;
-      color: #ff0033;
-      text-shadow: 0 0 10px #900;
+      font-size: 5em;
+      color: red;
+      text-shadow: 0 0 20px red;
+      text-align: center;
       margin-top: 20px;
     }
+
     #raccoon {
-      width: 200px;
+      display: block;
+      margin: 0 auto;
+      width: 360px;
+      height: auto;
       cursor: pointer;
       transition: transform 0.1s ease;
+      filter: drop-shadow(0 0 10px violet);
     }
-    #raccoon.clicked {
+
+    #raccoon:active {
       transform: scale(1.05);
     }
-    .button {
-      background-color: #1a1a2e;
-      color: #b19cd9;
-      border: 1px solid #654062;
-      padding: 10px 20px;
+
+    .score {
+      font-size: 2em;
+      text-align: center;
       margin: 10px;
+    }
+
+    .button {
+      display: block;
+      margin: 10px auto;
+      padding: 15px 25px;
+      font-size: 1.2em;
+      font-weight: bold;
+      background-color: #222;
+      color: violet;
+      border: 3px solid violet;
+      border-radius: 12px;
       cursor: pointer;
-      font-size: 1em;
+      width: 90%;
+      max-width: 300px;
+      transition: 0.3s ease;
     }
-    .section {
-      margin-top: 20px;
+
+    .button:hover {
+      background-color: violet;
+      color: black;
     }
+
     #menu, #submenu {
+      text-align: center;
+    }
+
+    #submenu {
       display: none;
     }
-    .menu-window {
-      background-color: #1c1b25;
-      border: 2px solid #5f3c5c;
-      margin: 20px auto;
-      padding: 20px;
-      max-width: 400px;
+
+    #wheel-container {
+      display: none;
+      margin-top: 30px;
+      text-align: center;
     }
-    .submenu-button {
-      width: 80px;
-      height: 80px;
-      background-color: #2e2e3e;
-      display: inline-block;
-      margin: 10px;
-      line-height: 80px;
-      border-radius: 10px;
-      font-size: 0.8em;
+
+    #wheel {
+      width: 300px;
+      height: 300px;
+      margin: 0 auto;
+      border-radius: 50%;
+      border: 8px solid violet;
+      background: conic-gradient(
+        red 0deg 60deg,
+        black 60deg 120deg,
+        violet 120deg 180deg,
+        red 180deg 240deg,
+        black 240deg 300deg,
+        violet 300deg 360deg
+      );
+      animation: pulse 2s infinite alternate;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(3600deg); }
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 10px violet; }
+      100% { box-shadow: 0 0 30px red; }
+    }
+
+    #reward {
+      font-size: 1.5em;
+      margin-top: 20px;
+      color: yellow;
+    }
+
+    .particle {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: red;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: explode 1s ease-out forwards;
+    }
+
+    @keyframes explode {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(3); }
     }
   </style>
 </head>
 <body>
+  <h1>Raccoon Clicker</h1>
+  <img id="raccoon" src="https://i.ibb.co/Xx9zLV5N/Hnet-com-image-1.jpg" alt="Raccoon">
+  <div class="score">Pisteet: <span id="score">0</span></div>
+  <p id="boost-message" style="text-align:center;"></p>
 
-  <h1>Raccoin Clicker</h1>
-
-  <div class="section">
-    <a href="https://imgbb.com/">
-      <img id="raccoon" src="https://i.ibb.co/Xx9zLV5N/Hnet-com-image-1.jpg" alt="pesukarhu">
-    </a>
-    <p>Pisteet: <span id="points">0</span></p>
+  <div id="menu">
     <button class="button" onclick="toggleMenu()">Valikko</button>
-    <br>
+    <div id="submenu">
+      <button class="button" onclick="toggleWheel()">Onnenpyörä</button>
+    </div>
     <button class="button" onclick="buyDoubleClick()">Osta tuplaklikkaus (100p)</button>
-    <button class="button" onclick="buyPowerClick()">Osta tehoklikkaus (250p)</button>
+    <button class="button" onclick="buyTurboClick()">Osta tehoklikkaus (250p)</button>
   </div>
 
-  <div id="menu" class="menu-window">
-    <h2>Valikko</h2>
-    <div id="submenu">
-      <div class="submenu-button" onclick="alert('Onnenpyörä avautuu!')">Onni</div>
-      <div class="submenu-button" onclick="alert('Varasto auki')">Varasto</div>
-      <div class="submenu-button" onclick="alert('Kortit auki')">Kortit</div>
-      <div class="submenu-button" onclick="alert('Taidot auki')">Taidot</div>
-    </div>
+  <div id="wheel-container">
+    <div id="wheel"></div>
+    <button class="button" onclick="spinWheel()">Pyöräytä</button>
+    <p id="reward"></p>
   </div>
 
   <script>
-    let points = 0;
-    let doubleClick = false;
-    let powerClick = false;
+    let score = 0;
+    let multiplier = 1;
+    let turbo = false;
 
-    const pointsDisplay = document.getElementById("points");
     const raccoon = document.getElementById("raccoon");
-    const spinSound = new Audio('https://www.soundjay.com/misc/sounds/spin-1.mp3');
+    raccoon.addEventListener("click", (event) => clickRaccoon(event));
 
-    raccoon.addEventListener("click", () => {
-      let gain = 1;
-      if (doubleClick) gain *= 2;
-      if (powerClick) gain *= 3;
-      points += gain;
-      pointsDisplay.textContent = points;
-      raccoon.classList.add("clicked");
-      setTimeout(() => raccoon.classList.remove("clicked"), 100);
-      spinSound.play(); // Play sound on click
-    });
+    function clickRaccoon(event) {
+      let points = multiplier;
+      if (turbo) points *= 3;
+      score += points;
+      document.getElementById("score").textContent = score;
+      showParticles(event.clientX, event.clientY);
 
-    function buyDoubleClick() {
-      if (points >= 100) {
-        points -= 100;
-        doubleClick = true;
-        pointsDisplay.textContent = points;
-        alert("Tuplaklikkaus aktivoitu!");
-      }
-    }
+      const clickSound = new Audio("https://www.soundjay.com/buttons/button-16.mp3");
+      clickSound.play();
 
-    function buyPowerClick() {
-      if (points >= 250) {
-        points -= 250;
-        powerClick = true;
-        pointsDisplay.textContent = points;
-        alert("Tehoklikkaus 5s aktivoitu!");
-        setTimeout(() => {
-          powerClick = false;
-        }, 5000);
+      if (turbo) {
+        document.getElementById("boost-message").textContent = "Tehoklikkaus Aktiivinen!";
+        setTimeout(() => document.getElementById("boost-message").textContent = "", 1000);
       }
     }
 
     function toggleMenu() {
-      const menu = document.getElementById("menu");
-      const submenu = document.getElementById("submenu");
-      if (menu.style.display === "none" || menu.style.display === "") {
-        menu.style.display = "block";
-        submenu.style.display = "block";
+      const menu = document.getElementById("submenu");
+      menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+
+    function toggleWheel() {
+      const wheel = document.getElementById("wheel-container");
+      wheel.style.display = wheel.style.display === "block" ? "none" : "block";
+    }
+
+    function spinWheel() {
+      const wheel = document.getElementById("wheel");
+      wheel.style.animation = "spin 4s ease-out";
+      const spinSound = new Audio("https://www.soundjay.com/misc/sounds/spin-1.mp3");
+      spinSound.play();
+
+      setTimeout(() => {
+        wheel.style.animation = "none";
+        const rewards = ["+10 pistettä", "x2 klikkeri", "Turbo!", "Tyhjä arpa", "x5 boost!", "50 pistettä!", "Mysteeriesine"];
+        const chosen = rewards[Math.floor(Math.random() * rewards.length)];
+        document.getElementById("reward").textContent = "Voitit: " + chosen;
+
+        if (chosen === "+10 pistettä") score += 10;
+        if (chosen === "x2 klikkeri") multiplier *= 2;
+        if (chosen === "Turbo!") turbo = true;
+        if (chosen === "x5 boost!") multiplier *= 5;
+        if (chosen === "50 pistettä!") score += 50;
+
+        setTimeout(() => turbo = false, 5000);
+        document.getElementById("score").textContent = score;
+      }, 4000);
+    }
+
+    function buyDoubleClick() {
+      if (score >= 100) {
+        score -= 100;
+        multiplier *= 2;
+        alert("Tuplaklikkaus aktivoitu!");
       } else {
-        menu.style.display = "none";
-        submenu.style.display = "none";
+        alert("Ei tarpeeksi pisteitä!");
+      }
+      document.getElementById("score").textContent = score;
+    }
+
+    function buyTurboClick() {
+      if (score >= 250) {
+        score -= 250;
+        turbo = true;
+        alert("Tehoklikkaus aktivoitu 5 sekunniksi!");
+        setTimeout(() => turbo = false, 5000);
+      } else {
+        alert("Ei tarpeeksi pisteitä!");
+      }
+      document.getElementById("score").textContent = score;
+    }
+
+    function showParticles(x, y) {
+      for (let i = 0; i < 10; i++) {
+        const particle = document.createElement("div");
+        particle.className = "particle";
+        particle.style.left = `${x + Math.random() * 30 - 15}px`;
+        particle.style.top = `${y + Math.random() * 30 - 15}px`;
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 1000);
       }
     }
   </script>
-
 </body>
 </html>
