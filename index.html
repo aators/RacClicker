@@ -1,151 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fi">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Raccoin Clicker</title>
-  <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
   <style>
     body {
-      margin: 0;
-      font-family: 'Share Tech Mono', monospace;
-      background: linear-gradient(to bottom, #1e1e2f, #0c0c15);
-      color: #fff;
+      background-color: #0c0b10;
+      background-image: url('https://www.transparenttextures.com/patterns/dark-denim-3.png');
+      color: #c8a2c8;
+      font-family: 'UnifrakturCook', sans-serif;
       text-align: center;
-      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
     }
-
     h1 {
-      font-family: 'UnifrakturCook', cursive;
       font-size: 3em;
-      color: #f0e6f6;
+      color: #ff0033;
+      text-shadow: 0 0 10px #900;
       margin-top: 20px;
-      text-shadow: 0 0 10px #bc13fe;
     }
-
     #raccoon {
       width: 200px;
-      transition: transform 0.2s ease;
-      filter: drop-shadow(0 0 10px #8888cc);
-    }
-
-    #raccoon:active {
-      transform: scale(1.1);
-    }
-
-    #points {
-      font-size: 2em;
-      margin: 15px;
-      color: #d1b3ff;
-      text-shadow: 0 0 5px #6a0dad;
-    }
-
-    button {
-      margin: 10px;
-      padding: 10px 20px;
-      background: #5c1a72;
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-size: 1em;
       cursor: pointer;
-      transition: background 0.2s ease;
+      transition: transform 0.1s ease;
     }
-
-    button:hover {
-      background: #822fb8;
+    #raccoon.clicked {
+      transform: scale(1.05);
     }
-
-    #menuWindow {
-      position: fixed;
-      top: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(20, 20, 30, 0.95);
-      border: 2px solid #a066c2;
-      padding: 20px;
-      border-radius: 15px;
-      display: none;
-      z-index: 999;
-      width: 80%;
-      max-width: 600px;
+    .button {
+      background-color: #1a1a2e;
+      color: #b19cd9;
+      border: 1px solid #654062;
+      padding: 10px 20px;
+      margin: 10px;
+      cursor: pointer;
+      font-size: 1em;
     }
-
     .section {
       margin-top: 20px;
+    }
+    #menu, #submenu {
       display: none;
     }
-
-    .wheel {
+    .menu-window {
+      background-color: #1c1b25;
+      border: 2px solid #5f3c5c;
       margin: 20px auto;
-      width: 200px;
-      height: 200px;
-      border: 10px solid #a020f0;
-      border-radius: 50%;
-      animation: spin 4s linear infinite;
-      background: conic-gradient(#a020f0 0% 25%, #ff66cc 25% 50%, #6a0dad 50% 75%, #333 75% 100%);
+      padding: 20px;
+      max-width: 400px;
     }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .menu-icons {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 15px;
-    }
-
-    .menu-icons button {
-      background: #2e143c;
-      padding: 10px;
-      width: 22%;
+    .submenu-button {
+      width: 80px;
+      height: 80px;
+      background-color: #2e2e3e;
+      display: inline-block;
+      margin: 10px;
+      line-height: 80px;
+      border-radius: 10px;
+      font-size: 0.8em;
     }
   </style>
 </head>
 <body>
 
   <h1>Raccoin Clicker</h1>
-  <img id="raccoon" src="https://i.ibb.co/FpJxyjd/6b2ba5a1-0e14-4ac1-99ca-a76c936a6273-01-01.png" alt="raccoon">
-  <div id="points">Pisteet: 0</div>
 
-  <button onclick="openMenu()">Valikko</button><br>
-  <button onclick="buyDoubleClick()">Osta tuplaklikkaus (100p)</button>
-  <button onclick="buyPowerClick()">Osta tehoklikkaus (250p 5s)</button>
+  <div class="section">
+    <a href="https://imgbb.com/">
+      <img id="raccoon" src="https://i.ibb.co/Xx9zLV5N/Hnet-com-image-1.jpg" alt="pesukarhu">
+    </a>
+    <p>Pisteet: <span id="points">0</span></p>
+    <button class="button" onclick="toggleMenu()">Valikko</button>
+    <br>
+    <button class="button" onclick="buyDoubleClick()">Osta tuplaklikkaus (100p)</button>
+    <button class="button" onclick="buyPowerClick()">Osta tehoklikkaus (250p)</button>
+  </div>
 
-  <div id="menuWindow">
+  <div id="menu" class="menu-window">
     <h2>Valikko</h2>
-    <div class="menu-icons">
-      <button onclick="showSection('wheel')">Onnenpyörä</button>
-      <button onclick="showSection('inventory')">Varasto</button>
-      <button onclick="showSection('cards')">Kortit</button>
-      <button onclick="showSection('skills')">Taidot</button>
+    <div id="submenu">
+      <div class="submenu-button" onclick="alert('Onnenpyörä avautuu!')">Onni</div>
+      <div class="submenu-button" onclick="alert('Varasto auki')">Varasto</div>
+      <div class="submenu-button" onclick="alert('Kortit auki')">Kortit</div>
+      <div class="submenu-button" onclick="alert('Taidot auki')">Taidot</div>
     </div>
-
-    <div id="wheel" class="section">
-      <h3>Onnenpyörä</h3>
-      <div class="wheel"></div>
-      <p>Voita pisteitä tai harvinaisia esineitä!</p>
-    </div>
-
-    <div id="inventory" class="section">
-      <h3>Varasto</h3>
-      <p>Taso 1: ruoantähteet, roskat, nöyhtä, oksat</p>
-      <p>Taso 2: ruokapurkit, jätökset, naula, puulauta</p>
-    </div>
-
-    <div id="cards" class="section">
-      <h3>Kortit</h3>
-      <p>Päivitä kortteja saadaksesi uusia taitoja.</p>
-      <p>Mining aukeaa tasolla 5.</p>
-    </div>
-
-    <div id="skills" class="section">
-      <h3>Taidot</h3>
-      <p>Suorita haasteita: esim. 10 oksaa + 3 ruokajätettä = uusi taito</p>
-    </div>
-
-    <button onclick="closeMenu()">Sulje</button>
   </div>
 
   <script>
@@ -153,54 +92,54 @@
     let doubleClick = false;
     let powerClick = false;
 
-    document.getElementById('raccoon').addEventListener('click', () => {
+    const pointsDisplay = document.getElementById("points");
+    const raccoon = document.getElementById("raccoon");
+    const spinSound = new Audio('https://www.soundjay.com/misc/sounds/spin-1.mp3');
+
+    raccoon.addEventListener("click", () => {
       let gain = 1;
       if (doubleClick) gain *= 2;
-      if (powerClick) gain *= 5;
+      if (powerClick) gain *= 3;
       points += gain;
-      updatePoints();
+      pointsDisplay.textContent = points;
+      raccoon.classList.add("clicked");
+      setTimeout(() => raccoon.classList.remove("clicked"), 100);
+      spinSound.play(); // Play sound on click
     });
 
-    function updatePoints() {
-      document.getElementById('points').innerText = 'Pisteet: ' + points;
-    }
-
     function buyDoubleClick() {
-      if (points >= 100 && !doubleClick) {
+      if (points >= 100) {
         points -= 100;
         doubleClick = true;
-        updatePoints();
+        pointsDisplay.textContent = points;
         alert("Tuplaklikkaus aktivoitu!");
       }
     }
 
     function buyPowerClick() {
-      if (points >= 250 && !powerClick) {
+      if (points >= 250) {
         points -= 250;
         powerClick = true;
-        updatePoints();
-        alert("Tehoklikkaus aktivoitu 5 sekunniksi!");
+        pointsDisplay.textContent = points;
+        alert("Tehoklikkaus 5s aktivoitu!");
         setTimeout(() => {
           powerClick = false;
-          alert("Tehoklikkaus päättyi.");
         }, 5000);
       }
     }
 
-    function openMenu() {
-      document.getElementById('menuWindow').style.display = 'block';
-      showSection('wheel');
-    }
-
-    function closeMenu() {
-      document.getElementById('menuWindow').style.display = 'none';
-    }
-
-    function showSection(id) {
-      const sections = document.querySelectorAll('.section');
-      sections.forEach(sec => sec.style.display = 'none');
-      document.getElementById(id).style.display = 'block';
+    function toggleMenu() {
+      const menu = document.getElementById("menu");
+      const submenu = document.getElementById("submenu");
+      if (menu.style.display === "none" || menu.style.display === "") {
+        menu.style.display = "block";
+        submenu.style.display = "block";
+      } else {
+        menu.style.display = "none";
+        submenu.style.display = "none";
+      }
     }
   </script>
+
 </body>
 </html>
