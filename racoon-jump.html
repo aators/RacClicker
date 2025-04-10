@@ -115,6 +115,29 @@ const maxHeight = 1_000_000;
 
 const itemTypes = ['pizza', 'fish', 'banana', 'coin', 'diamond'];
 
+function preloadImages(callback) {
+  const imageSources = {
+    raccoon: "https://i.ibb.co/B5Th9nvx/Polish-20250408-213340783.png",
+    bird: "https://i.ibb.co/P6Yczcw/enemy.png", // Vaihda tähän sopiva viholliskuva
+    pizza: "https://i.ibb.co/YcYfXg6/pizza.png",
+    fish: "https://i.ibb.co/zHNJfFt/fish.png",
+    banana: "https://i.ibb.co/sHgjBcN/banana.png",
+    coin: "https://i.ibb.co/vwhmf60/coin.png",
+    diamond: "https://i.ibb.co/P5GVyRP/diamond.png"
+  };
+  let loaded = 0;
+  const total = Object.keys(imageSources).length;
+  for (let key in imageSources) {
+    const img = new Image();
+    img.onload = () => {
+      images[key] = img;
+      loaded++;
+      if (loaded === total) callback();
+    };
+    img.src = imageSources[key];
+  }
+}
+
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -224,7 +247,7 @@ function update() {
       collectSound.play();
       createCollectEffect(i.x, i.y);
       score += 5;
-      localStorage.setItem("raccoon_score", score); // Tallentaa pisteet
+      localStorage.setItem("raccoon_score", score);
       scoreDisplay.innerText = "Pisteet: " + score;
       return false;
     }
@@ -276,7 +299,6 @@ CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
 
 function draw() {
   const cameraY = doodle.y - canvas.height / 2;
-
   const gradient = ctx.createLinearGradient(0, -cameraY, 0, canvas.height - cameraY);
   gradient.addColorStop(0, "#000000");
   gradient.addColorStop(1, "#1a1a1a");
@@ -289,24 +311,18 @@ function draw() {
   });
 
   drawEnemies(cameraY);
-  
-  // Hahmon kuva
-  ctx.drawImage(images.raccoon, doodle.x, canvas.height / 2, doodle.width, doodle.height);
 
-  heightDisplay.innerText = "Korkeus: " + Math.round((canvas.height - highPoint) / 10);
+  ctx.drawImage(images.raccoon, doodle.x, doodle.y - cameraY, doodle.width, doodle.height);
 }
 
 function gameLoop() {
   if (gameRunning) {
     update();
     draw();
+    heightDisplay.innerText = "Korkeus: " + Math.round(canvas.height - doodle.y);
     requestAnimationFrame(gameLoop);
   }
 }
-
-leftBtn.ontouchstart = () => doodle.dx = -moveSpeed;
-rightBtn.ontouchstart = () => doodle.dx = moveSpeed;
-leftBtn.ontouchend = rightBtn.ontouchend = () => doodle.dx = 0;
 
 startBtn.onclick = () => {
   startBtn.style.display = "none";
@@ -314,30 +330,19 @@ startBtn.onclick = () => {
   gameRunning = true;
   gameLoop();
 };
-
 restartBtn.onclick = () => {
   restartBtn.style.display = "none";
   resetGame();
   gameRunning = true;
   gameLoop();
 };
+leftBtn.onpointerdown = () => doodle.dx = -moveSpeed;
+rightBtn.onpointerdown = () => doodle.dx = moveSpeed;
+leftBtn.onpointerup = rightBtn.onpointerup = () => doodle.dx = 0;
 
-window.onload = () => {
-  images.raccoon = new Image();
-  images.raccoon.src = 'https://i.ibb.co/7dHfKQy2/Polish-20250408-213340783.png';
-  images.bird = new Image();
-  images.bird.src = 'bird.png';
-  images.pizza = new Image();
-  images.pizza.src = 'pizza.png';
-  images.fish = new Image();
-  images.fish.src = 'fish.png';
-  images.banana = new Image();
-  images.banana.src = 'banana.png';
-  images.coin = new Image();
-  images.coin.src = 'coin.png';
-  images.diamond = new Image();
-  images.diamond.src = 'diamond.png';
-};
+preloadImages(() => {
+  startBtn.style.display = "block";
+});
 </script>
 </body>
 </html>
