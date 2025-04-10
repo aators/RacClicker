@@ -2,142 +2,342 @@
 <html lang="fi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Pesukarhukainen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Racoon Jump</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
+      background: black;
       overflow: hidden;
-      background: linear-gradient(145deg, #0a000a, #150015);
-      color: white;
-      font-family: 'Arial', sans-serif;
     }
-
     canvas {
       display: block;
       margin: auto;
-      background: #111;
-      border: 3px solid #cc0055;
+      background: black;
     }
-
-    #pisteet {
-      position: fixed;
-      top: 10px;
-      left: 10px;
+    button {
+      position: absolute;
+      padding: 15px 30px;
+      font-size: 18px;
+      background-color: red;
       color: white;
-      background: #220022;
-      padding: 10px;
+      border: none;
       border-radius: 10px;
-      box-shadow: 0 0 10px #cc0055;
+      cursor: pointer;
       z-index: 10;
-      font-size: 1.2em;
+    }
+    #startBtn, #restartBtn {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    #leftBtn, #rightBtn {
+      bottom: 20px;
+      width: 80px;
+      height: 60px;
+    }
+    #leftBtn {
+      left: 10%;
+      text-align: center;
+      font-size: 16px;
+      background-color: green;
+      padding: 10px;
+    }
+    #rightBtn {
+      right: 10%;
+      text-align: center;
+      font-size: 16px;
+      background-color: blue;
+      padding: 10px;
+    }
+    #scoreDisplay, #heightDisplay {
+      position: absolute;
+      top: 10px;
+      font-size: 20px;
+      color: white;
+      font-family: sans-serif;
+      z-index: 10;
+    }
+    #scoreDisplay {
+      left: 10px;
+    }
+    #heightDisplay {
+      right: 10px;
+    }
+    .collectEffect {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle, gold, transparent);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: glitter 0.6s ease-out forwards;
+    }
+    @keyframes glitter {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(2.5); opacity: 0; }
     }
   </style>
 </head>
 <body>
-  <div id="pisteet">Pisteet: 0</div>
-  <canvas id="peliCanvas" width="360" height="640"></canvas>
+<canvas id="gameCanvas"></canvas>
+<button id="startBtn">Aloita peli</button>
+<button id="restartBtn" style="display:none;">Peli päättyi - Alusta</button>
+<button id="leftBtn">Vasen</button>
+<button id="rightBtn">Oikea</button>
+<div id="scoreDisplay">Pisteet: 0</div>
+<div id="heightDisplay">Korkeus: 0</div>
 
-  <script>
-    let data = JSON.parse(localStorage.getItem("raccoinData") || "{}");
-    let pisteet = data.pisteet || 0;
-    let tokenit = data.tokenit || 0;
-    let timantit = data.timantit || 0;
-    let pelaajaTaso = data.pelaajaTaso || 1;
+<audio id="jumpSound" src="jump.mp3" preload="auto"></audio>
+<audio id="collectSound" src="kerää.mp3" preload="auto"></audio>
 
-    function tallenna() {
-      localStorage.setItem("raccoinData", JSON.stringify({ pisteet, tokenit, timantit, pelaajaTaso }));
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const startBtn = document.getElementById("startBtn");
+const restartBtn = document.getElementById("restartBtn");
+const leftBtn = document.getElementById("leftBtn");
+const rightBtn = document.getElementById("rightBtn");
+const scoreDisplay = document.getElementById("scoreDisplay");
+const heightDisplay = document.getElementById("heightDisplay");
+const jumpSound = document.getElementById("jumpSound");
+const collectSound = document.getElementById("collectSound");
+
+let doodle, platforms, items, enemies, score, highPoint, gravity, jumpVelocity;
+let moveSpeed = 5;
+let images = {};
+let gameRunning = false;
+const maxHeight = 1_000_000;
+
+const itemTypes = ['pizza', 'fish', 'banana', 'coin', 'diamond'];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+
+function resetGame() {
+  resizeCanvas();
+  doodle = {
+    x: canvas.width / 2 - 25,
+    y: canvas.height / 2,
+    width: 50,
+    height: 60,
+    dx: 0,
+    dy: 0
+  };
+  gravity = 0.4;
+  jumpVelocity = -10;
+  score = parseInt(localStorage.getItem("raccoon_score")) || 0;
+  highPoint = doodle.y;
+  items = [];
+  enemies = [];
+  platforms = [];
+
+  platforms.push({ x: 0, y: canvas.height - 20, w: canvas.width, h: 15, dx: 0 });
+  for (let i = 1; i < 8; i++) spawnPlatform(canvas.height - i * 100);
+
+  scoreDisplay.innerText = "Pisteet: " + score;
+}
+
+function spawnPlatform(y) {
+  if ((canvas.height - y) > maxHeight) return;
+  let w = 60, h = 15;
+  let x = Math.random() * (canvas.width - w);
+  let dx = Math.random() < 0.3 ? (Math.random() < 0.5 ? -1 : 1) : 0;
+  platforms.push({ x, y, w, h, dx });
+  if (Math.random() < 0.5) {
+    const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+    items.push({ type, x: x + 15, y: y - 25, w: 30, h: 30 });
+  }
+}
+
+function spawnEnemy() {
+  const size = 40;
+  const x = Math.random() * (canvas.width - size);
+  enemies.push({ x, y: doodle.y - canvas.height - Math.random() * 200, w: size, h: size });
+}
+
+function createCollectEffect(x, y) {
+  const effect = document.createElement("div");
+  effect.className = "collectEffect";
+  effect.style.left = x + "px";
+  effect.style.top = y + "px";
+  document.body.appendChild(effect);
+  setTimeout(() => effect.remove(), 600);
+}
+
+function updateEnemies(cameraY) {
+  enemies.forEach(e => e.y += 2);
+  enemies = enemies.filter(e => e.y - cameraY < canvas.height + 100);
+  for (let e of enemies) {
+    if (
+      doodle.x < e.x + e.w &&
+      doodle.x + doodle.width > e.x &&
+      doodle.y < e.y + e.h &&
+      doodle.y + doodle.height > e.y
+    ) {
+      gameRunning = false;
+      restartBtn.style.display = "block";
     }
+  }
+  if (Math.random() < 0.01) spawnEnemy();
+}
 
-    const canvas = document.getElementById('peliCanvas');
-    const ctx = canvas.getContext('2d');
-    const raccoon = new Image();
-    raccoon.src = 'https://i.ibb.co/9mzZ2Gsh/Polish-20250409-115814160.png';
+function update() {
+  doodle.x += doodle.dx;
+  if (doodle.x < 0) doodle.x = 0;
+  if (doodle.x + doodle.width > canvas.width) doodle.x = canvas.width - doodle.width;
 
-    let raccoonX = canvas.width / 2 - 25;
-    let raccoonY = canvas.height - 60;
-    let velocityY = 0;
-    const gravity = 0.5;
+  doodle.dy += gravity;
+  doodle.y += doodle.dy;
 
-    const platformCount = 10;
-    const platforms = [];
-    let score = 0;
+  if (doodle.y < highPoint) highPoint = doodle.y;
 
-    for (let i = 0; i < platformCount; i++) {
-      platforms.push({
-        x: Math.random() * (canvas.width - 60),
-        y: canvas.height - i * 60,
-        width: 60,
-        height: 10
-      });
+  platforms.forEach(p => {
+    p.x += p.dx;
+    if (p.x < 0 || p.x + p.w > canvas.width) p.dx *= -1;
+    if (
+      doodle.dy > 0 &&
+      doodle.x + doodle.width > p.x &&
+      doodle.x < p.x + p.w &&
+      doodle.y + doodle.height > p.y &&
+      doodle.y + doodle.height < p.y + p.h
+    ) {
+      doodle.dy = jumpVelocity;
+      jumpSound.play();
     }
+  });
 
-    function drawPlatform(p) {
-      ctx.fillStyle = '#cc0055';
-      ctx.fillRect(p.x, p.y, p.width, p.height);
+  items = items.filter(i => {
+    if (
+      doodle.x < i.x + i.w &&
+      doodle.x + doodle.width > i.x &&
+      doodle.y < i.y + i.h &&
+      doodle.y + doodle.height > i.y
+    ) {
+      collectSound.play();
+      createCollectEffect(i.x, i.y);
+      score += 5;
+      localStorage.setItem("raccoon_score", score); // Tallentaa pisteet
+      scoreDisplay.innerText = "Pisteet: " + score;
+      return false;
     }
+    return true;
+  });
 
-    function updatePlatforms() {
-      for (let p of platforms) {
-        p.y += -velocityY;
+  let maxY = Math.min(...platforms.map(p => p.y));
+  while ((canvas.height - maxY) < maxHeight && platforms.length < 20) {
+    spawnPlatform(maxY - 100);
+    maxY -= 100;
+  }
 
-        if (p.y > canvas.height) {
-          p.y = 0;
-          p.x = Math.random() * (canvas.width - 60);
-          score++;
-          pisteet++;
-          document.getElementById("pisteet").textContent = "Pisteet: " + pisteet;
-          tallenna();
-        }
+  updateEnemies(doodle.y - canvas.height / 2);
 
-        if (
-          raccoonX + 50 > p.x &&
-          raccoonX < p.x + p.width &&
-          raccoonY + 50 > p.y &&
-          raccoonY + 50 < p.y + p.height &&
-          velocityY > 0
-        ) {
-          velocityY = -10;
-        }
-      }
-    }
+  if (doodle.y > canvas.height + 200) {
+    gameRunning = false;
+    restartBtn.style.display = "block";
+  }
+}
 
-    function updateRaccoon() {
-      velocityY += gravity;
-      raccoonY += velocityY;
+function drawEnemies(cameraY) {
+  enemies.forEach(e => {
+    ctx.drawImage(images.bird, e.x, e.y - cameraY, e.w, e.h);
+  });
+}
 
-      if (raccoonY > canvas.height) {
-        alert("Game Over! Kokonaispisteet: " + score);
-        tallenna();
-        location.reload();
-      }
-    }
+function drawPlatform(p, cameraY) {
+  let grad = ctx.createLinearGradient(p.x, p.y - cameraY, p.x + p.w, p.y - cameraY + p.h);
+  grad.addColorStop(0, "#6affb5");
+  grad.addColorStop(1, "#00c0ff");
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.roundRect(p.x, p.y - cameraY, p.w, p.h, 5);
+  ctx.fill();
+}
 
-    function drawRaccoon() {
-      ctx.drawImage(raccoon, raccoonX, raccoonY, 50, 50);
-    }
+CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+  if (w < 2 * r) r = w / 2;
+  if (h < 2 * r) r = h / 2;
+  this.beginPath();
+  this.moveTo(x + r, y);
+  this.arcTo(x + w, y, x + w, y + h, r);
+  this.arcTo(x + w, y + h, x, y + h, r);
+  this.arcTo(x, y + h, x, y, r);
+  this.arcTo(x, y, x + w, y, r);
+  this.closePath();
+  return this;
+};
 
-    function gameLoop() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      updateRaccoon();
-      updatePlatforms();
-      for (let p of platforms) drawPlatform(p);
-      drawRaccoon();
-      requestAnimationFrame(gameLoop);
-    }
+function draw() {
+  const cameraY = doodle.y - canvas.height / 2;
 
-    function moveRaccoon(e) {
-      const x = e.clientX || (e.touches && e.touches[0].clientX);
-      if (x !== undefined) {
-        raccoonX = x - 25;
-      }
-    }
+  const gradient = ctx.createLinearGradient(0, -cameraY, 0, canvas.height - cameraY);
+  gradient.addColorStop(0, "#000000");
+  gradient.addColorStop(1, "#1a1a1a");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    window.addEventListener('mousemove', moveRaccoon);
-    window.addEventListener('touchmove', moveRaccoon);
+  platforms.forEach(p => drawPlatform(p, cameraY));
+  items.forEach(i => {
+    ctx.drawImage(images[i.type], i.x, i.y - cameraY, i.w, i.h);
+  });
 
-    gameLoop();
-  </script>
+  drawEnemies(cameraY);
+  
+  // Hahmon kuva
+  ctx.drawImage(images.raccoon, doodle.x, canvas.height / 2, doodle.width, doodle.height);
+
+  heightDisplay.innerText = "Korkeus: " + Math.round((canvas.height - highPoint) / 10);
+}
+
+function gameLoop() {
+  if (gameRunning) {
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+  }
+}
+
+leftBtn.ontouchstart = () => doodle.dx = -moveSpeed;
+rightBtn.ontouchstart = () => doodle.dx = moveSpeed;
+leftBtn.ontouchend = rightBtn.ontouchend = () => doodle.dx = 0;
+
+startBtn.onclick = () => {
+  startBtn.style.display = "none";
+  resetGame();
+  gameRunning = true;
+  gameLoop();
+};
+
+restartBtn.onclick = () => {
+  restartBtn.style.display = "none";
+  resetGame();
+  gameRunning = true;
+  gameLoop();
+};
+
+window.onload = () => {
+  images.raccoon = new Image();
+  images.raccoon.src = 'https://i.ibb.co/7dHfKQy2/Polish-20250408-213340783.png';
+  images.bird = new Image();
+  images.bird.src = 'bird.png';
+  images.pizza = new Image();
+  images.pizza.src = 'pizza.png';
+  images.fish = new Image();
+  images.fish.src = 'fish.png';
+  images.banana = new Image();
+  images.banana.src = 'banana.png';
+  images.coin = new Image();
+  images.coin.src = 'coin.png';
+  images.diamond = new Image();
+  images.diamond.src = 'diamond.png';
+};
+</script>
 </body>
 </html>
